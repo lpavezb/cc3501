@@ -7,12 +7,13 @@ Esto hace tarea
 
 # Importar librería
 import matplotlib.pyplot as plt  # grafico
+import matplotlib.colors as color
 import tqdm
 import numpy as np
 
 
-class Rio:
-    def __init__(self, ancho, largo, dh):
+class Tarea:
+    def __init__(self, ancho=2000, largo=4000, dh=1):
         """
         Constructor
         :param ancho: Ancho
@@ -27,126 +28,140 @@ class Rio:
         self._h = int(float(ancho) / dh)
         self._w = int(float(largo) / dh)
 
+        self._temp = np.zeros((self._h, self._w))
         self._matrix = np.zeros((self._h, self._w))
-        self._rio = np.zeros((self._h, self._w))
+        self._geo = np.zeros((self._h, self._w))
 
-        self._adh = int(float(1) / dh)
+        # RUT = 19401577-1
+        self._RRR = 577.0 / 1000
 
-        # Test RIO
-        self._contornos = []
-        self._cont_der = []
-        self._cont_izq = []
-        self._cont_inf = []
-        self._cont_sup = []
-        self._pilares = []
+    def set_geo(self):
+        # Puntos de interes
+        mar = [1200 + 400.0 * self._RRR, 0.0]
+        planta = [mar[0] + 120, 0.0]
+        inicio_cordillera = [mar[0] + 400, 400 / 3.0]
+        cima1 = [mar[0] + 1200, 1500 + 200 * self._RRR]
+        valle = [mar[0] + 1500, 1300 + 200 * self._RRR]
+        cima2 = [mar[0] + 2000, 1850 + 100 * self._RRR]
+        fin = [4000.0, 1850 + 100 * self._RRR]
 
-    def reset(self):
-        """
-        Retorna al rio a su estado inicial
-        """
-        self.__init__(self._ancho, self._largo, self._dh)
+        nieve = int(1800.0 / self._dh)
 
-    def imprime(self):
-        """
-        Imprime el rio
-        :return:
-        """
-        print(self._matrix)
+        # Transformar puntos de interes a puntos en la grilla
+        p1 = (int(mar[0] / self._dh), int(mar[1] / self._dh))
+        p2 = (int(planta[0] / self._dh), int(planta[1] / self._dh))
+        p3 = (int(inicio_cordillera[0] / self._dh), int(inicio_cordillera[1] / self._dh))
+        p4 = (int(cima1[0] / self._dh), int(cima1[1] / self._dh))
+        p5 = (int(valle[0] / self._dh), int(valle[1] / self._dh))
+        p6 = (int(cima2[0] / self._dh), int(cima2[1] / self._dh))
+        p7 = (int(fin[0] / self._dh), int(fin[1] / self._dh))
 
-    def old_cb(self, t):
-        """
-        Pone cond borde
-        :param t: Tiempo
-        :return:
-        """
+        # puntos
+        # cielo = 0
+        # mar = 1
+        # fabrica = 2
+        # montana = 3
+        # nieve = 4
 
-        _t = 5 * t
-        for i in range(self._h):
-            self._matrix[i][0] = _t + 4 * i
+        # Setear geografia
 
-        for (x, y) in self._cont_der:
-            self._matrix[y][x] = 0
+        for x in range(self._w):
+            # primera seccion: mar
+            if x < p1[0]:
+                self._geo[0, x] = 1
+                self._matrix[0, x] = 1
+
+            # segunda seccion: fabrica
+            elif x < p2[0]:
+                self._geo[0, x] = 2
+                self._matrix[0, x] = 2
+
+            # tercera seccion: inicio montana 1
+            elif x < p3[0]:
+                y = f(p2, p3, x)
+                self._geo[0:y, x] = 3
+                self._matrix[y, x] = 3
+
+            # cuarta seccion: montana 1
+            elif x < p4[0]:
+                y = f(p3, p4, x)
+                if y > nieve:
+                    self._geo[0:nieve, x] = 3
+                    self._geo[nieve:y, x] = 4
+                    self._matrix[nieve, x] = 3
+                    self._matrix[y, x] = 4
+                else:
+                    self._geo[0:y, x] = 3
+                    self._matrix[y, x] = 3
+            # quinta seccion: valle
+
+            elif x < p5[0]:
+                y = f(p4, p5, x)
+                if y > nieve:
+                    self._geo[0:nieve, x] = 3
+                    self._geo[nieve:y, x] = 4
+                    self._matrix[nieve, x] = 3
+                    self._matrix[y, x] = 4
+                else:
+                    self._geo[0:y, x] = 3
+                    self._matrix[y, x] = 3
+            # sexta seccion: montana 2
+
+            elif x < p6[0]:
+                y = f(p5, p6, x)
+                if y > nieve:
+                    self._geo[0:nieve, x] = 3
+                    self._geo[nieve:y, x] = 4
+                    self._matrix[nieve, x] = 3
+                    self._matrix[y, x] = 4
+                else:
+                    self._geo[0:y, x] = 3
+                    self._matrix[y, x] = 3
+
+            else:
+                y = f(p6, p7, x)
+                if y > nieve:
+                    self._geo[0:nieve, x] = 3
+                    self._geo[nieve:y, x] = 4
+                    self._matrix[nieve, x] = 3
+                    self._matrix[y, x] = 4
+                else:
+                    self._geo[0:y, x] = 3
+                    self._matrix[y, x] = 3
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        # colorbar customization
+        cmap = color.ListedColormap(['cyan', 'blue', 'red', 'brown', 'white'])
+        bounds = [0, 1, 2, 3, 4, 5]
+        norm = color.BoundaryNorm(bounds, cmap.N)
+        cax = plt.imshow(self._geo, origin="lower", interpolation='none', cmap=cmap, norm=norm)
+        cb = fig.colorbar(cax, cmap=cmap, norm=norm, boundaries=bounds, ticks=[0.5, 1.5, 2.5, 3.5, 4.5])
+        cb.ax.set_yticklabels(['cielo', 'agua', 'fabrica', 'tierra', 'nieve'])
+
+        plt.show()
 
     def cb(self, t):
-        """
-        Pone cond borde
-        :param t: Tiempo
-        :return:
-        """
+        # puntos
+        cielo = 0
+        mar = 1
+        fabrica = 2
+        montana = 3
+        nieve = 4
 
-        largo = len(self._matrix[:, 0]) - 1
-        _t = 5 * t
-        for i in range(self._h):
-            if i <= largo / 2:
-                self._matrix[i][0] = _t + 5 * i
-            elif i >= largo / 2:
-                self._matrix[i][0] = _t + 5 * abs(largo - i)
+        # temperaturas
+        t_mar = 0
+        if t < 8:
+            t_mar = 4
+        elif t < 16:
+            t_mar = f([8, 4], [16, 20], t)
+        else:
+            t_mar = f([16, 20], [24, 4], t)
 
-        for (x, y) in self._cont_der:
-            self._matrix[y][x] = 0
-
-    def start(self):
-        """
-        Inicia calculo
-        :return:
-        """
-
-        for _ in tqdm.tqdm(range(1000)):  # 1000 iteraciones
-            for x in range(1, self._w):
-                for y in range(self._h):
-
-                    # Borde superior
-                    if y == 0 and x <= self._w - 2:
-                        self._matrix[y][x] = 0.25 * (
-                                2 * self._matrix[y + 1][x] + self._matrix[y][x - 1] + self._matrix[y][x + 1])
-
-                    # Borde inferior
-                    if y == self._h - 1 and x <= self._w - 2:
-                        self._matrix[y][x] = 0.25 * (
-                                    2 * self._matrix[y - 1][x] + self._matrix[y][x - 1] + self._matrix[y][x + 1])
-
-                    # Borde derecho #Final Rio
-                    if x == self._w - 1:
-                        # superior derecho
-                        if y == 0:
-                            self._matrix[y][x] = 0.25 * (2 * self._matrix[y + 1][x] + 2 * self._matrix[y][x - 1])
-                        # Borde inferior derecho
-                        elif y == self._h - 1:
-                            self._matrix[y][x] = 0.25 * (2 * self._matrix[y - 1][x] + 2 * self._matrix[y][x - 1])
-
-                        # Borde derecho
-                        else:
-                            self._matrix[y][x] = 0.25 * (
-                                        self._matrix[y + 1][x] + 2 * self._matrix[y][x - 1] + self._matrix[y - 1][x])
-
-                    # Dentro rio
-                    if 1 <= y <= self._h - 2 and x <= self._w - 2:
-
-                        # Es el contorno derecho de un pillar
-                        if (x, y) in self._cont_der:
-                            continue
-                        # Es el contorno izquierdo de un pilar
-                        elif (x, y) in self._cont_izq:
-                            self._matrix[y][x] = 0.25 * (
-                                        self._matrix[y + 1][x] + 2 * self._matrix[y][x - 1] + self._matrix[y - 1][x])
-                        # Es el contorno superior de un pilar
-                        elif (x, y) in self._cont_sup:
-                            self._matrix[y][x] = 0.25 * (
-                                        2 * self._matrix[y - 1][x] + self._matrix[y][x - 1] + self._matrix[y][x + 1])
-                        # Es el contorno inferior de un pilar
-                        elif (x, y) in self._cont_inf:
-                            self._matrix[y][x] = 0.25 * (
-                                        2 * self._matrix[y + 1][x] + self._matrix[y][x - 1] + self._matrix[y][x + 1])
-
-                        else:
-                            # Pilar
-                            if np.isnan(self._matrix[y][x]):
-                                continue
-
-                            # general
-                            self._matrix[y][x] = 0.25 * (
-                                        self._matrix[y - 1][x] + self._matrix[y + 1][x] + self._matrix[y][x - 1] +
-                                        self._matrix[y][x + 1])
+        for i in range(self._h):  # filas
+            for j in range(self._w):  # columnas
+                if self._matrix[i, j] == mar:
+                    self._temp = t_mar
 
     def plot(self):
         """
@@ -161,96 +176,17 @@ class Rio:
         fig.colorbar(cax)
         plt.show()
 
-    def addPilar(self, x, y):
-
-        """
-        Añade un pilar al Rio
-
-        Las grillas adyacentes de un pilar las denominamos contorno
-        el contorno de un pilar no puede coincidir (en ninguna grilla) con el contorno de otro pilar
-        Tampoco puede haber contornos que coincidinan con el "borde del rio"
-        :param x: (int) coordenada x centro pilar
-        :param y: (int) coordenada y centro pilar
-        :return: (bool) - True si pilar puede ser añadido
-                        - False si no
-        """
-        med_pilar = int(self._adh / 2)
-        x1 = x - med_pilar
-        x2 = x + med_pilar
-        y1 = y - med_pilar
-        y2 = y + med_pilar
-
-        if x1 < 2 or x2 > self._w - 2 or y1 < 2 or y2 > self._h - 2:
-            print("[Error]: No se puede poner un pilar tan cerca del borde!")
-            return False
-
-        for pilar in self._pilares:
-            if (abs(pilar[0] - x) < 2 * med_pilar + 2 and abs(pilar[1] - y) < 2 * med_pilar + 2):
-                if (abs(pilar[1] - y) == 2 * med_pilar and abs(pilar[0] - x) == 2 * med_pilar + 1) or (
-                        abs(pilar[1] - y) == 2 * med_pilar + 1 and abs(pilar[0] - x) == 2 * med_pilar):
-                    continue
-                print("[Error]: No se puede poner un pilar tan cerca de otro!")
-                return False
-
-        _cont_izq = []
-        _cont_der = []
-        _cont_inf = []
-        _cont_sup = []
-
-        for _y in range(y1, y2):
-            for _x in range(x1, x2):
-                self._matrix[_y][_x] = None
-            _cont_izq.append((x1 - 1, _y))
-            _cont_der.append((x2, _y))
-
-        for n in range(x1, x2, 1):
-            _cont_sup.append((n, y1 - 1))
-            _cont_inf.append((n, y2))
-
-        self._cont_der += _cont_der
-        self._cont_izq += _cont_izq
-        self._cont_inf += _cont_inf
-        self._cont_sup += _cont_sup
-        self._pilares.append((x, y))
-
-        self._contornos = self._cont_der + self._cont_izq + self._cont_sup + self._cont_inf
-
-        return True
-
-    def addPilarMetros(self, x, y):
-
-        """
-        Añade un pilar al Rio
-
-        :param x: (int)/(float) posición x del centro pilar
-        :param y: (int)/(float) posicion y centro pilar
-        :return: (bool) - True si pilar puede ser añadido
-                        - False si no
-        este metodo llama a addPilar
-        """
-        _x = int(x / self._dh)  # convertir metros a coordenadas
-        _y = int(y / self._dh)
-        print
-        _x
-        print
-        _y
-        return self.addPilar(_x, _y)
-
     def show_map(self):
 
         """
         Grafica el mapa del rio (pilares y contornos)
         :return: None
         """
-
-        for point in self._contornos:
-            self._rio[point[1]][point[0]] = 1
-
         fig = plt.figure()
         ax = fig.add_subplot(111)
         # # Se agrega grafico al plot
 
-        cax = plt.imshow(self._rio, cmap='Greys', interpolation='nearest')
+        cax = plt.imshow(self._geo, cmap='Greys', interpolation='nearest')
 
         # grillas diferenciales
         for k in range(1, self._w):
@@ -276,59 +212,17 @@ class Rio:
         # fig.colorbar(cax)
         plt.show()
 
-    def print_rio(self):
-        """
-        imprime la matriz que representa el mapa del rio
-        :return: None
-        """
-        for point in self._contornos:
-            self._rio[point[1]][point[0]] = 1
 
-        print(self._rio)
-
-    def get_presion(self):
-        """
-        Retorna el promedio de presión en la boca del rio
-        :return: (float)
-
-        """
-
-        last_colum = self._matrix[:, self._w - 1]
-        return np.mean(last_colum)
+def f(p1, p2, x):
+    n = p1[1]
+    m = (float(p2[1] - p1[1]) / (p2[0] - p1[0]))
+    y = ((m * (x - p1[0])) + n)
+    return int(y)
 
 
 def main():
-    # Instancia rio
-
-    print(" -- Simulador de Presiones en Rio -- ")
-    print("Dimensiones del Rio: ")
-    ancho = input("Ancho en metros: ")
-    largo = input("Largo en metros: ")
-
-    grilla = input("Tamaño de la grilla en metros: ")
-
-    r = Rio(ancho, largo, grilla)
-
-    pilares = input("Numeros de Pilares?: ")
-
-    n = 1
-    while n <= pilares:
-        print("-- Pilar {0} --".format(n))
-        x = input("posición x: ")
-        y = input("posición y: ")
-        a = r.addPilar(x, y)
-        if a:
-            print("Ok!")
-            n += 1
-        else:
-            print("Pilar inválido :(! ")
-            continue
-
-    r.cb(1)
-    r.show_map()
-    r.start()
-    r.imprime()
-    r.plot()
+    t = Tarea()
+    t.set_geo()
 
 
 def medir_presiones(rio, pos_x):
@@ -363,12 +257,6 @@ def medir_presiones(rio, pos_x):
     plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=1, borderaxespad=0)
     print(presion_rio_abajo)
     plt.show()
-
-
-def _test_medir_presion():
-    r = Rio(3.5, 7, 0.25)  # rio de 3.5 metros de ancho, 7 de largo y una grilla de 0.25 metros de lado
-    pos_x = int(r._w / 2)  # ubicamos el pilar a mitad de rio en eje x para luego iterarlo en eje y
-    medir_presiones(r, pos_x)
 
 
 if __name__ == '__main__':

@@ -4,6 +4,7 @@
     <list default="true" id="6a4885d2-a63a-468a-ae15-e6de0f46f82b" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/../tarea1/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../tarea1/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../tarea1/tarea1.py" beforeDir="false" afterPath="$PROJECT_DIR$/../tarea1/tarea1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -17,8 +18,11 @@
       <file leaf-file-name="rio.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/rio.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="584">
-              <caret line="164" lean-forward="true" selection-start-line="164" selection-end-line="164" />
+            <state relative-caret-position="-15">
+              <caret line="29" lean-forward="true" selection-start-line="29" selection-end-line="29" />
+              <folding>
+                <element signature="e#95#137#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -35,6 +39,7 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>import</find>
+      <find>_adh</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -48,7 +53,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1424" />
+    <option name="x" value="64" />
     <option name="y" value="-11" />
     <option name="width" value="1297" />
     <option name="height" value="780" />
@@ -133,7 +138,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1424" y="-11" width="1297" height="780" extended-state="6" />
+    <frame x="64" y="-11" width="1297" height="780" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24555984" />
@@ -167,6 +172,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2700">
           <caret line="182" column="68" lean-forward="true" selection-end-line="374" selection-end-column="10" />
+          <folding>
+            <element signature="e#95#137#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -179,8 +187,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/rio.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="584">
-          <caret line="164" lean-forward="true" selection-start-line="164" selection-end-line="164" />
+        <state relative-caret-position="-15">
+          <caret line="29" lean-forward="true" selection-start-line="29" selection-end-line="29" />
+          <folding>
+            <element signature="e#95#137#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

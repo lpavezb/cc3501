@@ -18,10 +18,10 @@
       <file leaf-file-name="tarea1.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/tarea1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="229">
-              <caret line="107" column="8" selection-start-line="107" selection-start-column="8" selection-end-line="107" selection-end-column="8" />
+            <state relative-caret-position="349">
+              <caret line="163" column="38" lean-forward="true" selection-start-line="163" selection-start-column="38" selection-end-line="163" selection-end-column="38" />
               <folding>
-                <element signature="e#82#124#0" expanded="true" />
+                <element signature="e#95#137#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -39,11 +39,12 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>Rio</find>
-      <find>self._adh</find>
       <find>self._ancho</find>
       <find>self._h</find>
       <find>_geografia</find>
       <find>_adh</find>
+      <find>self._adh</find>
+      <find>_fin</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -141,7 +142,14 @@
       <option name="project" value="LOCAL" />
       <updated>1523332197227</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="start again, copy tareita1">
+      <created>1523571314599</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1523571314599</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -172,11 +180,12 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="dibujo" />
-    <option name="LAST_COMMIT_MESSAGE" value="dibujo" />
+    <MESSAGE value="start again, copy tareita1" />
+    <option name="LAST_COMMIT_MESSAGE" value="start again, copy tareita1" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="2" />
+      <option name="time" value="4" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -185,7 +194,7 @@
         <state relative-caret-position="1455">
           <caret line="97" column="29" selection-start-line="97" selection-start-column="29" selection-end-line="97" selection-end-column="29" />
           <folding>
-            <element signature="e#82#124#0" expanded="true" />
+            <element signature="e#95#137#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -195,7 +204,7 @@
         <state relative-caret-position="1455">
           <caret line="97" column="29" selection-start-line="97" selection-start-column="29" selection-end-line="97" selection-end-column="29" />
           <folding>
-            <element signature="e#82#124#0" expanded="true" />
+            <element signature="e#95#137#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -205,7 +214,7 @@
         <state relative-caret-position="450">
           <caret line="30" column="22" selection-start-line="30" selection-start-column="22" selection-end-line="30" selection-end-column="22" />
           <folding>
-            <element signature="e#82#124#0" expanded="true" />
+            <element signature="e#95#137#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -219,10 +228,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/tarea1.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="229">
-          <caret line="107" column="8" selection-start-line="107" selection-start-column="8" selection-end-line="107" selection-end-column="8" />
+        <state relative-caret-position="349">
+          <caret line="163" column="38" lean-forward="true" selection-start-line="163" selection-start-column="38" selection-end-line="163" selection-end-column="38" />
           <folding>
-            <element signature="e#82#124#0" expanded="true" />
+            <element signature="e#95#137#0" expanded="true" />
           </folding>
         </state>
       </provider>

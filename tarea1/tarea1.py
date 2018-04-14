@@ -7,9 +7,10 @@ Esto hace tarea
 
 # Importar librería
 import matplotlib.pyplot as plt  # grafico
-import matplotlib.colors as color
+
 import tqdm
 import numpy as np
+import math
 
 
 class Tarea:
@@ -80,6 +81,8 @@ class Tarea:
             elif x < p3[0]:
                 y = f(p2, p3, x)
                 self._geo[0:y, x] = 3
+                self._matrix[0:y, x] = np.nan
+                self._temp[0:y, x] = np.nan
                 self._matrix[y, x] = 3
 
             # cuarta seccion: montana 1
@@ -88,34 +91,43 @@ class Tarea:
                 if y > nieve:
                     self._geo[0:nieve, x] = 3
                     self._geo[nieve:y, x] = 4
-                    self._matrix[nieve, x] = 3
+                    self._matrix[0:y, x] = np.nan
+                    self._temp[0:y, x] = np.nan
                     self._matrix[y, x] = 4
                 else:
                     self._geo[0:y, x] = 3
+                    self._matrix[0:y, x] = np.nan
+                    self._temp[0:y, x] = np.nan
                     self._matrix[y, x] = 3
-            # quinta seccion: valle
 
+            # quinta seccion: valle
             elif x < p5[0]:
                 y = f(p4, p5, x)
                 if y > nieve:
                     self._geo[0:nieve, x] = 3
                     self._geo[nieve:y, x] = 4
-                    self._matrix[nieve, x] = 3
+                    self._matrix[0:y, x] = np.nan
+                    self._temp[0:y, x] = np.nan
                     self._matrix[y, x] = 4
                 else:
                     self._geo[0:y, x] = 3
+                    self._matrix[0:y, x] = np.nan
+                    self._temp[0:y, x] = np.nan
                     self._matrix[y, x] = 3
-            # sexta seccion: montana 2
 
+            # sexta seccion: montana 2
             elif x < p6[0]:
                 y = f(p5, p6, x)
                 if y > nieve:
                     self._geo[0:nieve, x] = 3
                     self._geo[nieve:y, x] = 4
-                    self._matrix[nieve, x] = 3
+                    self._matrix[0:y, x] = np.nan
+                    self._temp[0:y, x] = np.nan
                     self._matrix[y, x] = 4
                 else:
                     self._geo[0:y, x] = 3
+                    self._matrix[0:y, x] = np.nan
+                    self._temp[0:y, x] = np.nan
                     self._matrix[y, x] = 3
 
             else:
@@ -123,25 +135,19 @@ class Tarea:
                 if y > nieve:
                     self._geo[0:nieve, x] = 3
                     self._geo[nieve:y, x] = 4
-                    self._matrix[nieve, x] = 3
+                    self._matrix[0:y, x] = np.nan
+                    self._temp[0:y, x] = np.nan
                     self._matrix[y, x] = 4
                 else:
                     self._geo[0:y, x] = 3
+                    self._matrix[0:y, x] = np.nan
+                    self._temp[0:y, x] = np.nan
                     self._matrix[y, x] = 3
 
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        # colorbar customization
-        cmap = color.ListedColormap(['cyan', 'blue', 'red', 'brown', 'white'])
-        bounds = [0, 1, 2, 3, 4, 5]
-        norm = color.BoundaryNorm(bounds, cmap.N)
-        cax = plt.imshow(self._geo, origin="lower", interpolation='none', cmap=cmap, norm=norm)
-        cb = fig.colorbar(cax, cmap=cmap, norm=norm, boundaries=bounds, ticks=[0.5, 1.5, 2.5, 3.5, 4.5])
-        cb.ax.set_yticklabels(['cielo', 'agua', 'fabrica', 'tierra', 'nieve'])
-
-        plt.show()
-
     def cb(self, t):
+        if t > 24:
+            t = 0
+
         # puntos
         cielo = 0
         mar = 1
@@ -150,7 +156,6 @@ class Tarea:
         nieve = 4
 
         # temperaturas
-        t_mar = 0
         if t < 8:
             t_mar = 4
         elif t < 16:
@@ -158,59 +163,43 @@ class Tarea:
         else:
             t_mar = f([16, 20], [24, 4], t)
 
+        arg = (math.pi / 12.0) * t
+        t_fab = 450 * (math.cos(arg) + 2)
+
         for i in range(self._h):  # filas
             for j in range(self._w):  # columnas
+                # cb mar
                 if self._matrix[i, j] == mar:
-                    self._temp = t_mar
+                    self._temp[i, j] = t_mar
+                elif self._matrix[i, j] == cielo:
+                    t_atm = f([0, t_mar], [1000, t_mar - 6], i)
+                    self._temp[i, j] = t_atm
+                elif self._matrix[i, j] == montana:
+                    self._temp[i, j] = 20
+                elif self._matrix[i, j] == nieve:
+                    self._temp[i, j] = 0
+                elif self._matrix[i, j] == fabrica:
+                    self._temp[i, j] = t_fab
 
-    def plot(self):
-        """
-        Grafica
-        :return: None
-        """
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
+    def get_cb_matrix(self):
+        return self._matrix
 
-        # Se agrega grafico al plot
-        cax = ax.imshow(self._matrix, interpolation='none')
-        fig.colorbar(cax)
-        plt.show()
+    def get_temp_matrix(self):
+        return self._temp
 
-    def show_map(self):
+    def get_geo_matrix(self):
+        return self._geo
 
-        """
-        Grafica el mapa del rio (pilares y contornos)
-        :return: None
-        """
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        # # Se agrega grafico al plot
 
-        cax = plt.imshow(self._geo, cmap='Greys', interpolation='nearest')
+def plot(matrix):
+    fig = plt.figure()
+    # ax = fig.add_subplot(111)
 
-        # grillas diferenciales
-        for k in range(1, self._w):
-            plt.axvline(x=k - 0.5, color=(0, 0, 0, 0.5), linestyle='--', lw=0.5)
+    # colorbar customization
+    cax = plt.imshow(matrix, origin="lower")
+    cb = fig.colorbar(cax)
 
-        for m in range(1, self._h):
-            plt.axhline(y=m - 0.5, color=(0, 0, 0, 0.5), linestyle='--', lw=0.5)
-
-        # coordenadas en metros
-        for i in range(1, int(self._largo) + 1):
-            plt.axvline(x=i / self._dh - 0.5, color='k', linestyle='--', lw=1.0)
-
-        for j in range(1, int(self._ancho) + 1):
-            plt.axhline(y=j / self._dh - 0.5, color='k', linestyle='--', lw=1.0)
-
-        # Bordes del rio
-        plt.axvline(x=self._w - 0.5, color='r', linestyle='--', lw=1.0)
-        plt.axvline(x=-0.5, color='r', linestyle='--', lw=1.0)
-
-        plt.axhline(y=self._h - 0.5, color='r', linestyle='--', lw=1.0)
-        plt.axhline(y=0 - 0.5, color='r', linestyle='--', lw=1.0)
-
-        # fig.colorbar(cax)
-        plt.show()
+    plt.show()
 
 
 def f(p1, p2, x):
@@ -223,40 +212,10 @@ def f(p1, p2, x):
 def main():
     t = Tarea()
     t.set_geo()
-
-
-def medir_presiones(rio, pos_x):
-    """
-    Recibe un rio y una coordenada en X
-    :param rio:
-    :param pos_x:
-    :return: None
-    """
-
-    presion_rio_abajo = []
-    pos = []
-    rio.reset()
-
-    for pos_y in range(0, rio._h):
-
-        a = rio.addPilar(pos_x, pos_y)
-        if not (a):
-            continue
-
-        rio.old_cb(1)
-        rio.start()
-        presion_rio_abajo.append(rio.get_presion())
-        pos.append(pos_y * rio._dh)
-        rio.reset()
-
-    graph = plt.plot(pos, presion_rio_abajo, color='red', marker='o', linestyle='none', linewidth=2, markersize=12,
-                     label="presion desembocadura rio ")
-    vert_line = plt.axvline(x=rio._ancho / 2.0, label="centro del rio")
-    plt.xlabel('Distancia de Borde Superior a Centro de Pilar[ m ]')
-    plt.ylabel('Presion Promedio en Boca del Rio [ Pascal(?) ]')
-    plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=1, borderaxespad=0)
-    print(presion_rio_abajo)
-    plt.show()
+    t.cb(16)
+    m = t.get_temp_matrix()
+    print m.shape
+    plot(m)
 
 
 if __name__ == '__main__':

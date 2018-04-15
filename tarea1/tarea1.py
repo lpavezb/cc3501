@@ -190,6 +190,80 @@ class Tarea:
     def get_geo_matrix(self):
         return self._geo
 
+    def iterate(self, b=False):
+        epsilon = 0.001
+        e = 0  # error
+        e0 = 0  # error inicial
+        ni = 0  # numero de iteraciones
+        w = self._w
+        h = self._h
+        while ni <= 10000:
+            for j in range(w):
+                for i in range(h):
+                    (self._temp[i][j], e) = sobreRS(self._temp, i, j, get_w(w, h), w-1, h-1, self._dh, rho, b)
+            if e < epsilon: break
+            if e0 == 0: e0 = e
+            ni += 1  # numero de iteraciones
+
+# Funcion copiada de https://github.com/ppizarror/01-tarea-computagrafica/blob/master/lib.py
+# Funcion que retorna true si hay un NAN en torno a a[i][j]
+def nearNAN(a, i, j):
+    if np.isnan(a[i - 1][j]): return True
+    if np.isnan(a[i + 1][j]): return True
+    if np.isnan(a[i][j - 1]): return True
+    if np.isnan(a[i][j + 1]): return True
+    return False
+
+
+def sobreRS(matriz, i, j, w, width, height, h, rho, b=False):
+    if 0 < i < height and 0 < j < width:  # Si no esta en los bordes exteriores de la matriz
+        if nearNAN(matriz, i, j):  # Si es una condicion de borde
+            if np.isnan(matriz[i][j + 1]):  # Si el lado derecho es NAN
+                if np.isnan(matriz[i + 1][j]):  # Si ademas abajo es NAN -> Esquina derecha
+                    n = matriz[i][j] + (1.0 / 4) * (2 * matriz[i - 1][j] + 2 * matriz[i][j - 1] -
+                                                    4 * matriz[i][j]) * w
+                else:  # Borde derecho
+                    n = matriz[i][j] + (1.0 / 4) * (matriz[i + 1][j] + matriz[i - 1][j] + 2 *
+                                                    matriz[i][j - 1] - 4 * matriz[i][j]) * w
+            elif np.isnan(matriz[i + 1][j]):  # Si el lado de abajo es NAN
+                if np.isnan(matriz[i][j - 1]):  # Si el lado izquierdo es NAN -> Esquina izquierda
+                    n = matriz[i][j] + (1.0 / 4) * (2 * matriz[i - 1][j] + 2 * matriz[i][j + 1] -
+                                                    4 * matriz[i][j]) * w
+                else:  # Borde inferior
+                    n = matriz[i][j] + (1.0 / 4) * (2 * matriz[i - 1][j] + matriz[i][j + 1] +
+                                                    matriz[i][j - 1] - 4 * matriz[i][j]) * w
+            elif np.isnan(matriz[i][j - 1]):
+                n = matriz[i][j] + (1.0 / 4) * (matriz[i + 1][j] + matriz[i - 1][j] + 2 *
+                                                matriz[i][j + 1] - 4 * matriz[i][j]) * w
+            else:
+                return (matriz[i][j], 1)
+        else:  # Punto interior
+            n = matriz[i][j] + (1.0 / 4) * (matriz[i + 1][j] + matriz[i - 1][j] + matriz[i][j + 1] + matriz[i][j - 1] -
+                                            4 * matriz[i][j] - (h**2) * rho(i, j, b)) * w
+    else:
+        # Esquinas
+        if i == 0 and j == 0:  # esquina superior izquierda
+            n = matriz[i][j] + (1.0 / 4) * (2 * matriz[i + 1][j] + 2 * matriz[i][j + 1] - 4 * matriz[i][j]) * w
+        elif i == 0 and j == width:  # esquina superior derecha
+            n = matriz[i][j] + (1.0 / 4) * (2 * matriz[i + 1][j] + 2 * matriz[i][j - 1] - 4 * matriz[i][j]) * w
+        elif i == height and j == 0:  # esquina inferior izquierda
+            n = matriz[i][j] + (1.0 / 4) * (2 * matriz[i - 1][j] + 2 * matriz[i][j + 1] - 4 * matriz[i][j]) * w
+        elif i == height and j == width:  # esquina inferior derecha
+            n = matriz[i][j] + (1.0 / 4) * (2 * matriz[i - 1][j] + 2 * matriz[i][j - 1] - 4 * matriz[i][j]) * w
+        # Bordes
+        else:
+            n = matriz[i][j]  # Como son dirichlet no se hace nada
+    e = abs(matriz[i, j] - n)
+    return (n, e)
+
+
+def rho(x, y, b=False):
+    if b:
+        den = math.sqrt((x ** 2) + (y ** 2) + 120)
+        return 1 / den
+    else:
+        return 0
+
 
 def plot(matrix):
     fig = plt.figure()
@@ -209,12 +283,20 @@ def f(p1, p2, x):
     return int(y)
 
 
+def get_w(m, n):
+    pi = math.pi
+    a = math.cos(pi / (n - 1))
+    b = math.cos(pi / (m - 1))
+    c = (a + b) ** 2
+    return 4.0 / (2 + math.sqrt(4 - c))
+
+
 def main():
-    t = Tarea()
+    t = Tarea(dh=10)
     t.set_geo()
-    t.cb(16)
+    t.cb(0)
     m = t.get_temp_matrix()
-    print m.shape
+    t.iterate(b=True)
     plot(m)
 
 

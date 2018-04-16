@@ -179,7 +179,7 @@ class Tarea:
                 elif self._matrix[i, j] == nieve:
                     self._temp[i, j] = 0
                 elif self._matrix[i, j] == fabrica:
-                    self._temp[i, j] = t_fab
+                    self._temp[i, j] = 0
 
     def get_cb_matrix(self):
         return self._matrix
@@ -200,7 +200,7 @@ class Tarea:
         while ni <= 10000:
             for j in range(w):
                 for i in range(h):
-                    (self._temp[i][j], e) = sobreRS(self._temp, i, j, get_w(w, h), w-1, h-1, self._dh, rho, b)
+                    (self._temp[i][j], e) = sobreRS(self._temp, i, j, get_w(w-1, h-1), w-1, h-1, self._dh, rho, b)
             if e < epsilon: break
             if e0 == 0: e0 = e
             ni += 1  # numero de iteraciones
@@ -267,9 +267,6 @@ def rho(x, y, b=False):
 
 def plot(matrix):
     fig = plt.figure()
-    # ax = fig.add_subplot(111)
-
-    # colorbar customization
     cax = plt.imshow(matrix, origin="lower")
     cb = fig.colorbar(cax)
 
@@ -288,13 +285,14 @@ def get_w(m, n):
     a = math.cos(pi / (n - 1))
     b = math.cos(pi / (m - 1))
     c = (a + b) ** 2
-    return 4.0 / (2 + math.sqrt(4 - c))
+    w = 4.0 / (2 + math.sqrt(4 - c))
+    return w
 
 
 def main():
-    t = Tarea(dh=10)
+    t = Tarea()
     t.set_geo()
-    t.cb(0)
+    t.cb(8)
     m = t.get_temp_matrix()
     t.iterate(b=True)
     plot(m)

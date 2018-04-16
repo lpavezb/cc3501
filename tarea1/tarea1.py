@@ -179,7 +179,7 @@ class Tarea:
                 elif self._matrix[i, j] == nieve:
                     self._temp[i, j] = 0
                 elif self._matrix[i, j] == fabrica:
-                    self._temp[i, j] = 0
+                    self._temp[i, j] = t_fab
 
     def get_cb_matrix(self):
         return self._matrix
@@ -294,7 +294,8 @@ def main():
     t.set_geo()
     t.cb(8)
     m = t.get_temp_matrix()
-    t.iterate(b=True)
+    t.iterate(b=False)
+    print m.shape
     plot(m)
 
 

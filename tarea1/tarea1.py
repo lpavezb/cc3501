@@ -197,13 +197,17 @@ class Tarea:
         ni = 0  # numero de iteraciones
         w = self._w
         h = self._h
-        while ni <= 10000:
+        while ni <= 1000:
             for j in range(w):
                 for i in range(h):
-                    (self._temp[i][j], e) = sobreRS(self._temp, i, j, get_w(w-1, h-1), w-1, h-1, self._dh, rho, b)
+                    (self._temp[i][j], e) = sobreRS(self._temp, i, j, get_w(w - 1, h - 1), w - 1, h - 1, self._dh, rho,
+                                                    b)
+            print e
             if e < epsilon: break
             if e0 == 0: e0 = e
             ni += 1  # numero de iteraciones
+            print ni
+
 
 # Funcion copiada de https://github.com/ppizarror/01-tarea-computagrafica/blob/master/lib.py
 # Funcion que retorna true si hay un NAN en torno a a[i][j]
@@ -216,30 +220,43 @@ def nearNAN(a, i, j):
 
 
 def sobreRS(matriz, i, j, w, width, height, h, rho, b=False):
-    if 0 < i < height and 0 < j < width:  # Si no esta en los bordes exteriores de la matriz
-        if nearNAN(matriz, i, j):  # Si es una condicion de borde
-            if np.isnan(matriz[i][j + 1]):  # Si el lado derecho es NAN
-                if np.isnan(matriz[i + 1][j]):  # Si ademas abajo es NAN -> Esquina derecha
+    if 0 < i < height and 0 < j < width:
+        if np.isnan(matriz[i][j]):
+            n = matriz[i][j]
+        elif nearNAN(matriz, i, j):
+            if np.isnan(matriz[i][j + 1]):
+                if np.isnan(matriz[i + 1][j]):
                     n = matriz[i][j] + (1.0 / 4) * (2 * matriz[i - 1][j] + 2 * matriz[i][j - 1] -
                                                     4 * matriz[i][j]) * w
-                else:  # Borde derecho
-                    n = matriz[i][j] + (1.0 / 4) * (matriz[i + 1][j] + matriz[i - 1][j] + 2 *
-                                                    matriz[i][j - 1] - 4 * matriz[i][j]) * w
-            elif np.isnan(matriz[i + 1][j]):  # Si el lado de abajo es NAN
-                if np.isnan(matriz[i][j - 1]):  # Si el lado izquierdo es NAN -> Esquina izquierda
+                else:
+                    if np.isnan(matriz[i - 1][j]):
+                        if np.isnan(matriz[i][j - 1]):
+                            n = matriz[i][j] + (1.0 / 4) * (4 * matriz[i + 1][j] - 4 * matriz[i][j]) * w
+                        else:
+                            n = matriz[i][j] + (1.0 / 4) * (2 * matriz[i + 1][j] + 2 *
+                                                            matriz[i][j - 1] - 4 * matriz[i][j]) * w
+                    else:
+                        n = matriz[i][j] + (1.0 / 4) * (matriz[i + 1][j] + matriz[i - 1][j] + 2 *
+                                                        matriz[i][j - 1] - 4 * matriz[i][j]) * w
+            elif np.isnan(matriz[i + 1][j]):
+                if np.isnan(matriz[i][j - 1]):
                     n = matriz[i][j] + (1.0 / 4) * (2 * matriz[i - 1][j] + 2 * matriz[i][j + 1] -
                                                     4 * matriz[i][j]) * w
-                else:  # Borde inferior
+                else:
                     n = matriz[i][j] + (1.0 / 4) * (2 * matriz[i - 1][j] + matriz[i][j + 1] +
                                                     matriz[i][j - 1] - 4 * matriz[i][j]) * w
             elif np.isnan(matriz[i][j - 1]):
-                n = matriz[i][j] + (1.0 / 4) * (matriz[i + 1][j] + matriz[i - 1][j] + 2 *
-                                                matriz[i][j + 1] - 4 * matriz[i][j]) * w
+                if np.isnan(matriz[i - 1][j]):
+                    n = matriz[i][j] + (1.0 / 4) * (2 * matriz[i + 1][j] + 2 *
+                                                    matriz[i][j + 1] - 4 * matriz[i][j]) * w
+                else:
+                    n = matriz[i][j] + (1.0 / 4) * (matriz[i + 1][j] + matriz[i - 1][j] + 2 *
+                                                    matriz[i][j + 1] - 4 * matriz[i][j]) * w
             else:
                 return (matriz[i][j], 1)
-        else:  # Punto interior
+        else:
             n = matriz[i][j] + (1.0 / 4) * (matriz[i + 1][j] + matriz[i - 1][j] + matriz[i][j + 1] + matriz[i][j - 1] -
-                                            4 * matriz[i][j] - (h**2) * rho(i, j, b)) * w
+                                            4 * matriz[i][j] - (h ** 2) * rho(i, j, b)) * w
     else:
         # Esquinas
         if i == 0 and j == 0:  # esquina superior izquierda
@@ -254,6 +271,9 @@ def sobreRS(matriz, i, j, w, width, height, h, rho, b=False):
         else:
             n = matriz[i][j]  # Como son dirichlet no se hace nada
     e = abs(matriz[i, j] - n)
+
+    if np.isnan(e) or e == 0.0:
+        e = 1
     return (n, e)
 
 
@@ -290,7 +310,7 @@ def get_w(m, n):
 
 
 def main():
-    t = Tarea()
+    t = Tarea(dh=40)
     t.set_geo()
     t.cb(8)
     m = t.get_temp_matrix()

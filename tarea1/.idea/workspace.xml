@@ -4,6 +4,7 @@
     <list default="true" id="0463904e-2382-466c-937d-6254fdfda37e" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tarea1.py" beforeDir="false" afterPath="$PROJECT_DIR$/tarea1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tareita1/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../tareita1/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -13,12 +14,12 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+    <leaf>
       <file leaf-file-name="tarea1.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/tarea1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1909">
-              <caret line="316" column="21" selection-start-line="316" selection-start-column="21" selection-end-line="316" selection-end-column="21" />
+            <state relative-caret-position="-1031">
+              <caret line="273" column="28" lean-forward="true" selection-start-line="273" selection-start-column="28" selection-end-line="273" selection-end-column="28" />
               <folding>
                 <element signature="e#95#137#0" expanded="true" />
               </folding>
@@ -69,6 +70,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -80,7 +82,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -184,7 +185,14 @@
       <option name="project" value="LOCAL" />
       <updated>1523846190902</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="se arregla problema con iteraciones, funciona(?)">
+      <created>1523937839641</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1523937839641</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -221,7 +229,8 @@
     <MESSAGE value="funciona raro" />
     <MESSAGE value="working hard" />
     <MESSAGE value="working very hard" />
-    <option name="LAST_COMMIT_MESSAGE" value="working very hard" />
+    <MESSAGE value="se arregla problema con iteraciones, funciona(?)" />
+    <option name="LAST_COMMIT_MESSAGE" value="se arregla problema con iteraciones, funciona(?)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -328,8 +337,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/tarea1.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1909">
-          <caret line="316" column="21" selection-start-line="316" selection-start-column="21" selection-end-line="316" selection-end-column="21" />
+        <state relative-caret-position="-1031">
+          <caret line="273" column="28" lean-forward="true" selection-start-line="273" selection-start-column="28" selection-end-line="273" selection-end-column="28" />
           <folding>
             <element signature="e#95#137#0" expanded="true" />
           </folding>

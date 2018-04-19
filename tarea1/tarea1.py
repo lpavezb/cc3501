@@ -15,7 +15,7 @@ import math
 
 
 class Tarea:
-    def __init__(self, ancho=2000, largo=4000, dh=1):
+    def __init__(self, ancho=2000, largo=4000, dh=0.4):
         """
         Constructor
         :param ancho: Ancho
@@ -23,15 +23,17 @@ class Tarea:
         :param dh: Tamaño grilla diferencial
         :type ancho: int,float
         """
-        self._ancho = ancho  # privada
+        self._ancho = ancho
         self._largo = largo
+
+        self._factor = 0.005
         self._dh = dh
+        self._adh = self._factor / self._dh
+
+        self._h = int(self._ancho * self._adh)
+        self._w = int(self._largo * self._adh)
 
         self._t = 0  # hora
-
-        self._h = int(float(ancho) / dh)
-        self._w = int(float(largo) / dh)
-
         self._temp = np.zeros((self._h, self._w))
         self._matrix = np.zeros((self._h, self._w))
         self._geo = np.zeros((self._h, self._w))
@@ -49,16 +51,16 @@ class Tarea:
         cima2 = [mar[0] + 2000, 1850 + 100 * self._RRR]
         fin = [4000.0, 1850 + 100 * self._RRR]
 
-        nieve = int(1800.0 / self._dh)
+        nieve = int(1800.0 * self._adh)
 
         # Transformar puntos de interes a puntos en la grilla
-        p1 = (int(mar[0] / self._dh), int(mar[1] / self._dh))
-        p2 = (int(planta[0] / self._dh), int(planta[1] / self._dh))
-        p3 = (int(inicio_cordillera[0] / self._dh), int(inicio_cordillera[1] / self._dh))
-        p4 = (int(cima1[0] / self._dh), int(cima1[1] / self._dh))
-        p5 = (int(valle[0] / self._dh), int(valle[1] / self._dh))
-        p6 = (int(cima2[0] / self._dh), int(cima2[1] / self._dh))
-        p7 = (int(fin[0] / self._dh), int(fin[1] / self._dh))
+        p1 = (int(mar[0] * self._adh), int(mar[1] * self._adh))
+        p2 = (int(planta[0] * self._adh), int(planta[1] * self._adh))
+        p3 = (int(inicio_cordillera[0] * self._adh), int(inicio_cordillera[1] * self._adh))
+        p4 = (int(cima1[0] * self._adh), int(cima1[1] * self._adh))
+        p5 = (int(valle[0] * self._adh), int(valle[1] * self._adh))
+        p6 = (int(cima2[0] * self._adh), int(cima2[1] * self._adh))
+        p7 = (int(fin[0] * self._adh), int(fin[1] * self._adh))
 
         # puntos
         # cielo = 0
@@ -350,23 +352,23 @@ def get_w(m, n):
 
 
 def main():
-    t = Tarea(dh=10)
+    t = Tarea(dh=0.05)
     t.set_geo()
     t.cb(0)
-    t.iterate(b=True)
+    t.iterate(b=False)
     t.plot_temp()
     print(np.shape(t.get_temp_matrix()))
     t.cb(8)
-    t.iterate(b=True)
+    t.iterate(b=False)
     t.plot_temp()
     t.cb(12)
-    t.iterate(b=True)
+    t.iterate(b=False)
     t.plot_temp()
     t.cb(16)
-    t.iterate(b=True)
+    t.iterate(b=False)
     t.plot_temp()
     t.cb(20)
-    t.iterate(b=True)
+    t.iterate(b=False)
     t.plot_temp()
 
 

@@ -9,6 +9,7 @@ Esto hace tarea
 import matplotlib.pyplot as plt  # grafico
 import matplotlib.colors as color
 
+import time
 import tqdm
 import numpy as np
 import math
@@ -16,13 +17,6 @@ import math
 
 class Tarea:
     def __init__(self, ancho=2000, largo=4000, dh=0.4, factor=0.004):
-        """
-        Constructor
-        :param ancho: Ancho
-        :param largo: Largo
-        :param dh: Tamaño grilla diferencial
-        :type ancho: int,float
-        """
         self._ancho = ancho
         self._largo = largo
 
@@ -186,6 +180,16 @@ class Tarea:
                 elif self._cb[i, j] == fabrica:
                     self._temp[i, j] = t_fab
 
+    def mean(self):
+        aux = []
+        m = self._temp
+        for i in range(self._h):
+            for j in range(self._w):
+                value = m[i][j]
+                if not np.isnan(value):
+                    aux.append(value)
+        return np.mean(aux)
+
     def plot_geo(self):
         fig = plt.figure()
 
@@ -221,15 +225,27 @@ class Tarea:
     def get_geo_matrix(self):
         return self._geo
 
-    def iterate(self, b=False):
+    def iterate_with_it_number_and_w(self, b=False, iterations=1000, w_r=1.96):
         self._rho = b
+        e = 0
+        w = self._w
+        h = self._h
+        now = time.time()
+        for _ in tqdm.tqdm(range(iterations)):
+            for j in range(w):
+                for i in range(h):
+                    (self._temp[i][j], e) = sobreRS(self._temp, i, j, w_r, e, w - 1, h - 1,
+                                                    self._dh, rho, b)
+        later = time.time()
+        return int(later - now)
+
+    def iterate(self, b=False):
+        self._rho = b  # valor para el titulo del grafico
         epsilon = 0.001
         e = 0  # error
-        ni = 0  # numero de iteraciones
         w = self._w
         h = self._h
         w_r = get_w(w, h)
-        print "w: " + str(w_r)
         for _ in tqdm.tqdm(range(2000)):
             max_e = 0
             for j in range(w):
@@ -237,18 +253,20 @@ class Tarea:
                     (self._temp[i][j], e) = sobreRS(self._temp, i, j, w_r, e, w - 1, h - 1,
                                                     self._dh, rho, b)
                     if max_e < e: max_e = e
-
-            # print(e)
             print max_e
             if max_e < epsilon:
                 break
-            ni += 1  # numero de iteraciones
 
-    def doTarea(self, hora=0, iterate=False):
+    def doTarea(self, hora=0, rho=False):
         self.set_geo()
         self.cb(hora)
-        self.iterate(b=iterate)
+        self.iterate(b=rho)
         self.plot_temp()
+
+    def doTarea2(self, w_r=1.96):
+        self.set_geo()
+        self.cb(0)
+        return self.iterate_with_it_number_and_w(iterations=1000, w_r=w_r)
 
 
 # Funcion copiada de https://github.com/ppizarror/01-tarea-computagrafica/blob/master/lib.py
@@ -367,15 +385,17 @@ def get_w(m, n):
     return w
 
 
+def plot_mid_t(x, y):
+    plt.plot(x, y, '-ro')
+    plt.title("Temperatura media segun la hora")
+    plt.xlabel("Hora [hrs]")
+    plt.ylabel("Temperatura media [C]")
+    plt.show()
+
+
 def main():
     t = Tarea(dh=0.08, factor=0.005)
-    t.doTarea(hora=0, iterate=True)
-    t.doTarea(hora=8, iterate=True)
-    t.doTarea(hora=12, iterate=True)
-    t.doTarea(hora=16, iterate=True)
-    t.doTarea(hora=20, iterate=True)
-    print(np.shape(t.get_temp_matrix()))
-
+    t.doTarea(hora=0, rho=False)
 
 
 if __name__ == '__main__':

@@ -15,7 +15,7 @@ import math
 
 
 class Tarea:
-    def __init__(self, ancho=2000, largo=4000, dh=0.4):
+    def __init__(self, ancho=2000, largo=4000, dh=0.4, factor=0.004):
         """
         Constructor
         :param ancho: Ancho
@@ -26,7 +26,7 @@ class Tarea:
         self._ancho = ancho
         self._largo = largo
 
-        self._factor = 0.005
+        self._factor = factor
         self._dh = dh
         self._adh = self._factor / self._dh
 
@@ -35,11 +35,12 @@ class Tarea:
 
         self._t = 0  # hora
         self._temp = np.zeros((self._h, self._w))
-        self._matrix = np.zeros((self._h, self._w))
+        self._cb = np.zeros((self._h, self._w))
         self._geo = np.zeros((self._h, self._w))
 
         # RUT = 19401577-1
         self._RRR = 577.0 / 1000
+        self._rho = False
 
     def set_geo(self):
         # Puntos de interes
@@ -75,20 +76,20 @@ class Tarea:
             # primera seccion: mar
             if x < p1[0]:
                 self._geo[0, x] = 1
-                self._matrix[0, x] = 1
+                self._cb[0, x] = 1
 
             # segunda seccion: fabrica
             elif x < p2[0]:
                 self._geo[0, x] = 2
-                self._matrix[0, x] = 2
+                self._cb[0, x] = 2
 
             # tercera seccion: inicio montana 1
             elif x < p3[0]:
                 y = f(p2, p3, x)
                 self._geo[0:y, x] = 3
-                self._matrix[0:y, x] = np.nan
+                self._cb[0:y, x] = np.nan
                 self._temp[0:y, x] = np.nan
-                self._matrix[y, x] = 3
+                self._cb[y, x] = 3
 
             # cuarta seccion: montana 1
             elif x < p4[0]:
@@ -96,14 +97,14 @@ class Tarea:
                 if y > nieve:
                     self._geo[0:nieve, x] = 3
                     self._geo[nieve:y, x] = 4
-                    self._matrix[0:y, x] = np.nan
+                    self._cb[0:y, x] = np.nan
+                    self._cb[y, x] = 4
                     self._temp[0:y, x] = np.nan
-                    self._matrix[y, x] = 4
                 else:
                     self._geo[0:y, x] = 3
-                    self._matrix[0:y, x] = np.nan
+                    self._cb[0:y, x] = np.nan
+                    self._cb[y, x] = 3
                     self._temp[0:y, x] = np.nan
-                    self._matrix[y, x] = 3
 
             # quinta seccion: valle
             elif x < p5[0]:
@@ -111,14 +112,14 @@ class Tarea:
                 if y > nieve:
                     self._geo[0:nieve, x] = 3
                     self._geo[nieve:y, x] = 4
-                    self._matrix[0:y, x] = np.nan
+                    self._cb[0:y, x] = np.nan
+                    self._cb[y, x] = 4
                     self._temp[0:y, x] = np.nan
-                    self._matrix[y, x] = 4
                 else:
                     self._geo[0:y, x] = 3
-                    self._matrix[0:y, x] = np.nan
+                    self._cb[0:y, x] = np.nan
+                    self._cb[y, x] = 3
                     self._temp[0:y, x] = np.nan
-                    self._matrix[y, x] = 3
 
             # sexta seccion: montana 2
             elif x < p6[0]:
@@ -126,28 +127,28 @@ class Tarea:
                 if y > nieve:
                     self._geo[0:nieve, x] = 3
                     self._geo[nieve:y, x] = 4
-                    self._matrix[0:y, x] = np.nan
+                    self._cb[0:y, x] = np.nan
+                    self._cb[y, x] = 4
                     self._temp[0:y, x] = np.nan
-                    self._matrix[y, x] = 4
                 else:
                     self._geo[0:y, x] = 3
-                    self._matrix[0:y, x] = np.nan
+                    self._cb[0:y, x] = np.nan
+                    self._cb[y, x] = 3
                     self._temp[0:y, x] = np.nan
-                    self._matrix[y, x] = 3
 
             else:
                 y = f(p6, p7, x)
                 if y > nieve:
                     self._geo[0:nieve, x] = 3
                     self._geo[nieve:y, x] = 4
-                    self._matrix[0:y, x] = np.nan
+                    self._cb[0:y, x] = np.nan
+                    self._cb[y, x] = 4
                     self._temp[0:y, x] = np.nan
-                    self._matrix[y, x] = 4
                 else:
                     self._geo[0:y, x] = 3
-                    self._matrix[0:y, x] = np.nan
+                    self._cb[0:y, x] = np.nan
+                    self._cb[y, x] = 3
                     self._temp[0:y, x] = np.nan
-                    self._matrix[y, x] = 3
 
     def cb(self, t):
         self._t = t
@@ -173,16 +174,16 @@ class Tarea:
         for i in range(self._h):  # filas
             for j in range(self._w):  # columnas
                 # cb mar
-                if self._matrix[i, j] == mar:
+                if self._cb[i, j] == mar:
                     self._temp[i, j] = t_mar
-                elif self._matrix[i, j] == cielo:
-                    t_atm = f([0, t_mar], [1000, t_mar - 6], i)
+                elif self._cb[i, j] == cielo:
+                    t_atm = f([0, t_mar], [1000 * self._adh, t_mar - 6], i)
                     self._temp[i, j] = t_atm
-                elif self._matrix[i, j] == montana:
+                elif self._cb[i, j] == montana:
                     self._temp[i, j] = 20
-                elif self._matrix[i, j] == nieve:
+                elif self._cb[i, j] == nieve:
                     self._temp[i, j] = 0
-                elif self._matrix[i, j] == fabrica:
+                elif self._cb[i, j] == fabrica:
                     self._temp[i, j] = t_fab
 
     def plot_geo(self):
@@ -203,13 +204,16 @@ class Tarea:
         fig = plt.figure()
         cax = plt.imshow(self._temp, origin="lower")
         fig.colorbar(cax)
-        plt.title("Temperatura a las " + str(self._t) + ":00 hrs")
+        if self._rho:
+            plt.title("Temperatura a las " + str(self._t) + ":00 hrs (rho != 0)")
+        else:
+            plt.title("Temperatura a las " + str(self._t) + ":00 hrs (rho = 0)")
         plt.xlabel("Ancho [m]")
         plt.ylabel("Altura [m]")
         plt.show()
 
     def get_cb_matrix(self):
-            return self._matrix
+        return self._cb
 
     def get_temp_matrix(self):
         return self._temp
@@ -218,23 +222,33 @@ class Tarea:
         return self._geo
 
     def iterate(self, b=False):
+        self._rho = b
         epsilon = 0.001
         e = 0  # error
-        e0 = 0  # error inicial
         ni = 0  # numero de iteraciones
         w = self._w
         h = self._h
-        for _ in tqdm.tqdm(range(1000)):
+        w_r = get_w(w, h)
+        print "w: " + str(w_r)
+        for _ in tqdm.tqdm(range(2000)):
+            max_e = 0
             for j in range(w):
                 for i in range(h):
-                    (self._temp[i][j], e) = sobreRS(self._temp, i, j, get_w(w - 1, h - 1), e, w - 1, h - 1,
+                    (self._temp[i][j], e) = sobreRS(self._temp, i, j, w_r, e, w - 1, h - 1,
                                                     self._dh, rho, b)
-            print(e)
-            if e < epsilon:
+                    if max_e < e: max_e = e
+
+            # print(e)
+            print max_e
+            if max_e < epsilon:
                 break
-            if e0 == 0:
-                e0 = e
             ni += 1  # numero de iteraciones
+
+    def doTarea(self, hora=0, iterate=False):
+        self.set_geo()
+        self.cb(hora)
+        self.iterate(b=iterate)
+        self.plot_temp()
 
 
 # Funcion copiada de https://github.com/ppizarror/01-tarea-computagrafica/blob/master/lib.py
@@ -251,6 +265,8 @@ def nearNAN(a, i, j):
     return False
 
 
+# Funcion basada en https://github.com/ppizarror/01-tarea-computagrafica/blob/master/lib.py
+# se agregaron algunas condiciones que no estaban en la funcion "copiada"
 def sobreRS(matriz, i, j, w, e, width, height, h, rho, b=False):
     if b:
         ro = rho(i, j)
@@ -297,7 +313,7 @@ def sobreRS(matriz, i, j, w, e, width, height, h, rho, b=False):
                                                     4 * matriz[i][j] - (h ** 2) * ro) * w
 
             else:  # arriba
-                n = matriz[i][j] + (1.0 / 4) * (matriz[i + 1][j] + matriz[i][j-1] + 2 *
+                n = matriz[i][j] + (1.0 / 4) * (matriz[i + 1][j] + matriz[i][j - 1] + 2 *
                                                 matriz[i][j + 1] - 4 * matriz[i][j] - (h ** 2) * ro) * w
 
         else:
@@ -332,7 +348,7 @@ def sobreRS(matriz, i, j, w, e, width, height, h, rho, b=False):
 
 
 def rho(x, y):
-    return 1 / (x**2 + y**2 + 120)**0.5
+    return 1 / (x ** 2 + y ** 2 + 120) ** 0.5
 
 
 def f(p1, p2, x):
@@ -352,24 +368,14 @@ def get_w(m, n):
 
 
 def main():
-    t = Tarea(dh=0.05)
-    t.set_geo()
-    t.cb(0)
-    t.iterate(b=False)
-    t.plot_temp()
+    t = Tarea(dh=0.08, factor=0.005)
+    t.doTarea(hora=0, iterate=True)
+    t.doTarea(hora=8, iterate=True)
+    t.doTarea(hora=12, iterate=True)
+    t.doTarea(hora=16, iterate=True)
+    t.doTarea(hora=20, iterate=True)
     print(np.shape(t.get_temp_matrix()))
-    t.cb(8)
-    t.iterate(b=False)
-    t.plot_temp()
-    t.cb(12)
-    t.iterate(b=False)
-    t.plot_temp()
-    t.cb(16)
-    t.iterate(b=False)
-    t.plot_temp()
-    t.cb(20)
-    t.iterate(b=False)
-    t.plot_temp()
+
 
 
 if __name__ == '__main__':

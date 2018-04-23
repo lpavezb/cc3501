@@ -16,7 +16,7 @@ import math
 
 
 class Tarea:
-    def __init__(self, ancho=2000, largo=4000, dh=0.4, factor=0.004):
+    def __init__(self, ancho=2000, largo=4000, dh=0.08, factor=0.005):
         self._ancho = ancho
         self._largo = largo
 

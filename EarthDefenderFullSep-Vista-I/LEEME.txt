@@ -1,0 +1,17 @@
+
+Earth Defender
+--------------------------
+
+La nave sigue horizontalmente al mouse.
+
+'clic'		:Disparo simple
+'espacio'	:Disparo múltiple (se agota)
+'enter'		:Cambia la aceleración del escenario aleatoriamente
+'backspace'	:Acelera la generación de meteoritos
+
+Encienda los parlantes, el juego tiene sonido.
+
+Implementación testeada con:
+- Python 2.6
+- PyOpenGL 3.0.1
+- PyGame 1.9.1

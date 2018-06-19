@@ -3,14 +3,21 @@ from models.bomb import *
 
 
 class Bomberman(Figura):
-    def __init__(self, pos=Vector(0, 0), vel=20, rgb=(1.0, 1.0, 1.0)):
+    def __init__(self, pos=Vector(0, 0), vel=15, rgb=(1.0, 1.0, 1.0)):
         self.vel_x = Vector(vel, 0)
         self.vel_y = Vector(0, vel)
-        self.a = 6
+        self.a = 3.2
+        self.can_place_bomb = True
+        self.place_bomb_time = time.time()
         self.bombs = []
+        self.w = 0
+        self.h = 0
         super().__init__(pos, rgb)
 
     def figura(self):
+        self.w = 5 * self.a
+        self.h = 11.5 * self.a
+
         glBegin(GL_QUADS)
 
         # head
@@ -86,6 +93,89 @@ class Bomberman(Figura):
         glVertex2f((x1 + w) * a, (y1 + h) * a)
         glVertex2f((x1 + w) * a, y1 * a)
 
-    def place_bomb(self):
-        b = Bomb()
-        self.bombs.append(b)
+    def place_bomb(self, timeout=0.5):
+        if self.can_place_bomb:
+            self.place_bomb_time = time.time()
+            self.bombs.append(Bomb(pos=self.pos))
+            self.can_place_bomb = False
+        if time.time() - self.place_bomb_time > timeout:
+            self.can_place_bomb = True
+
+    def explode_bomb(self):
+        for bomb in self.bombs:
+            bomb.explode()
+
+    def collide_left(self, wall):
+        w_w = wall.w
+        w_h = wall.h
+        w_x = wall.pos.x
+        w_y = wall.pos.y
+        h = self.h
+        x = self.pos.x
+        y = self.pos.y
+        if w_y <= y <= w_y+w_h:
+            if w_x <= x <= w_x+w_w+1:
+                self.pos.x = w_x + w_w + 1
+                return True
+        if y < w_y < y+h < w_y+w_h:
+            if w_x <= x <= w_x+w_w+1:
+                self.pos.x = w_x + w_w + 1
+                return True
+        return False
+
+    def collide_right(self, wall):
+        w_w = wall.w
+        w_h = wall.h
+        w_x = wall.pos.x
+        w_y = wall.pos.y
+        w = self.w
+        h = self.h
+        x = self.pos.x
+        y = self.pos.y
+        if w_y <= y <= w_y+w_h:
+            if w_x <= x+w <= w_x+w_w:
+                self.pos.x = w_x - w
+                return True
+        if y < w_y < y+h < w_y+w_h:
+            if w_x <= x+w <= w_x+w_w:
+                self.pos.x = w_x - w
+                return True
+        return False
+
+    def collide_up(self, wall):
+        w_w = wall.w
+        w_h = wall.h
+        w_x = wall.pos.x
+        w_y = wall.pos.y
+        w = self.w
+        h = self.h
+        x = self.pos.x
+        y = self.pos.y
+        if w_x <= x <= w_x+w_w:
+            if w_y <= y+h <= w_y+w_h:
+                self.pos.y = w_y-h
+                return True
+        if x < w_x < x+w < w_x+w_w:
+            if w_y <= y+h <= w_y+w_h:
+                self.pos.y = w_y - h
+                return True
+        return False
+
+    def collide_down(self, wall):
+        w_w = wall.w
+        w_h = wall.h
+        w_x = wall.pos.x
+        w_y = wall.pos.y
+        w = self.w
+        h = self.h
+        x = self.pos.x
+        y = self.pos.y
+        if w_x <= x <= w_x+w_w:
+            if w_y <= y <= w_y+w_h+1:
+                self.pos.y = w_y + w_h + 1
+                return True
+        if x < w_x < x+w < w_x+w_w:
+            if w_y <= y <= w_y+w_h+1:
+                self.pos.y = w_y + w_h + 1
+                return True
+        return False

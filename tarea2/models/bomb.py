@@ -1,12 +1,27 @@
 from CC3501Utils import *
+import time
 
 
 class Bomb(Figura):
     def __init__(self, pos=Vector(0, 0), rgb=(1.0, 1.0, 1.0)):
-        self.a = 20
+        self.a = 10
+        self.place_time = time.time()
+        self.active = True
+        self.exploding = False
+        self.w = 0
+        self.h = 0
         super().__init__(pos, rgb)
 
     def figura(self):
+        if not self.exploding:
+            self.bomb()
+        else:
+            self.explosion()
+
+    def bomb(self):
+        self.w = 3 * self.a
+        self.h = 4 * self.a
+
         glBegin(GL_POLYGON)
         a = self.a
         # head
@@ -43,3 +58,17 @@ class Bomb(Figura):
         glVertex2f(x1 * a, (y1 + h) * a)
         glVertex2f((x1 + w) * a, (y1 + h) * a)
         glVertex2f((x1 + w) * a, y1 * a)
+
+    def explode(self, timeout=1):
+        self.crear()
+        if time.time() - self.place_time > timeout:
+            self.place_time = time.time()
+            if self.exploding:
+                self.active = False
+            self.exploding = True
+
+    def explosion(self):
+        self.a = 15
+        self.bomb()
+
+

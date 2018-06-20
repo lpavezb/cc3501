@@ -1,7 +1,8 @@
 from models.bomb import *
+import math
 
 
-class Bomberman(Figura):
+class Enemy(Figura):
     def __init__(self, pos=Vector(0, 0), vel=20, rgb=(1.0, 1.0, 1.0)):
         self.alive = True
         self.vel = vel
@@ -27,10 +28,92 @@ class Bomberman(Figura):
         self.can_place_bomb_timeout = t
 
     def figura(self):
-        if self.aux_animation:
-            self.figure1()
-        else:
-            self.figure2()
+        a = self.a
+
+        # head
+        glBegin(GL_POLYGON)
+        glVertex2f(1 * a, 8 * a)
+        glVertex2f(1 * a, 9 * a)
+        glVertex2f(2 * a, 10 * a)
+        glVertex2f(4 * a, 10 * a)
+        glVertex2f(5 * a, 9 * a)
+        glVertex2f(5 * a, 8 * a)
+        glVertex2f(4 * a, 7 * a)
+        glVertex2f(2 * a, 7 * a)
+        glEnd()
+
+        glBegin(GL_POLYGON)
+        glColor3f(0.5, 0.5, 0.5)
+        glVertex2f(2 * a, 9.5 * a)
+        glVertex2f(2 * a, 10 * a)
+        glVertex2f(4 * a, 10 * a)
+        glVertex2f(4 * a, 9.5 * a)
+        glVertex2f(3.5 * a, 9 * a)
+        glVertex2f(2.5 * a, 9 * a)
+        glEnd()
+
+        glBegin(GL_QUADS)
+        glColor3f(0, 0, 0)
+        # eyes
+        rect(2, 8.25, 0.5, 0.5, a)
+        rect(3.5, 8.25, 0.5, 0.5, a)
+
+        # mouth
+        rect(2.75, 7.25, 0.5, 0.25, a)
+
+        # camera in the head
+        rect(2.85, 9.1, 0.25, 0.25, a)
+
+        glColor3f(0.6, 0.6, 0.6)
+        # arms
+        rect(0, 4, 1, 3, a)
+        rect(5, 4, 1, 3, a)
+
+        glColor3f(0.6, 0.6, 0.6)
+        # legs
+        rect(1, 0, 1, 3.5, a)
+        rect(4, 0, 1, 3.5, a)
+        glEnd()
+
+        # torso
+        glColor3f(162/255, 0, 0)
+        glBegin(GL_POLYGON)
+        glVertex2f(1 * a, 6 * a)
+        glVertex2f(1 * a, 7 * a)
+        glVertex2f(5 * a, 7 * a)
+        glVertex2f(5 * a, 6 * a)
+        glVertex2f(4 * a, 4 * a)
+        glVertex2f(2 * a, 4 * a)
+        glEnd()
+        glBegin(GL_QUADS)
+        rect(2, 3, 2, 1, a)
+        glEnd()
+
+        # aldebaran logo
+        glBegin(GL_TRIANGLE_FAN)
+        glColor3f(0.6, 0.6, 0.6)
+        glVertex2f(3 * a, 5.5 * a)
+        for i in range(9):
+            glVertex2f((3 + 0.5 * math.cos(i * 2 * math.pi / 8)) * a, (5.5 + 0.5 * math.sin(i * 2 * math.pi / 8)) * a)
+        glEnd()
+
+        glLineWidth(3)
+        glBegin(GL_LINES)
+        glColor3f(0, 0, 1)
+        glVertex2f(3 * a, 5.8 * a)
+        glVertex2f(3 * a, 5.6 * a)
+
+        glVertex2f(2.9 * a, 5.5 * a)
+        glVertex2f(3.1 * a, 5.5 * a)
+
+        glVertex2f(2.95 * a, 5.4 * a)
+        glVertex2f(2.8 * a, 5.2 * a)
+
+        glVertex2f(3.05 * a, 5.4 * a)
+        glVertex2f(3.1 * a, 5.3 * a)
+        glEnd()
+
+        glLineWidth(2)
 
     def figure1(self):
         glBegin(GL_QUADS)

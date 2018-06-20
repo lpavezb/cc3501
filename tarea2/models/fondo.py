@@ -14,10 +14,13 @@ class Fondo(Figura):
     def figura(self):
         glBegin(GL_QUADS)
 
-        glColor3f(103 / 255.0, 193 / 255.0, 182 / 255.0)
+        glColor3f(0 / 255.0, 100 / 255.0, 0 / 255.0)
 
         glVertex2f(800, 0)
         glVertex2f(0, 0)
         glVertex2f(0, 600)
         glVertex2f(800, 600)
+
+        glColor3f(1, 0, 0)
+        rect(15, 0, 2, 1, 25)
         glEnd()

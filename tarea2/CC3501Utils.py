@@ -13,7 +13,7 @@ from pygame.locals import *
 def init(ancho, alto, titulo):
     # inicializar pygame
     pygame.init()
-    pygame.display.set_mode((ancho, alto), OPENGL | DOUBLEBUF)
+    screen = pygame.display.set_mode((ancho, alto), OPENGL | DOUBLEBUF)
     pygame.display.set_caption(titulo)
 
     # inicializar opengl
@@ -29,7 +29,7 @@ def init(ancho, alto, titulo):
     glShadeModel(GL_SMOOTH)
     glClearDepth(1.0)
     # glDisable(GL_DEPTH_TEST)
-    return
+    return screen
 
 
 # Clase para representar vectores en un espacio 2D
@@ -150,3 +150,86 @@ class Figura:
     def figura(self):
         pass
 
+
+def clean(objects):
+    for o in objects:
+        if not o.active:
+            index = objects.index(o)
+            objects.pop(index)
+
+
+def rect(x1, y1, w, h, a):
+    glVertex2f(x1 * a, y1 * a)
+    glVertex2f(x1 * a, (y1 + h) * a)
+    glVertex2f((x1 + w) * a, (y1 + h) * a)
+    glVertex2f((x1 + w) * a, y1 * a)
+
+
+def collide_left(o1, o2):
+    w_w = o2.w
+    w_h = o2.h
+    w_x = o2.pos.x
+    w_y = o2.pos.y
+    h = o1.h
+    x = o1.pos.x
+    y = o1.pos.y
+    if w_y <= y <= w_y+w_h:
+        if w_x <= x <= w_x+w_w+1:
+            return True
+    if y < w_y < y+h < w_y+w_h:
+        if w_x <= x <= w_x+w_w+1:
+            return True
+    return False
+
+
+def collide_right(o1, o2):
+    w_w = o2.w
+    w_h = o2.h
+    w_x = o2.pos.x
+    w_y = o2.pos.y
+    w = o1.w
+    h = o1.h
+    x = o1.pos.x
+    y = o1.pos.y
+    if w_y <= y <= w_y+w_h:
+        if w_x <= x+w <= w_x+w_w:
+            return True
+    if y < w_y < y+h < w_y+w_h:
+        if w_x <= x+w <= w_x+w_w:
+            return True
+    return False
+
+
+def collide_up(o1, o2):
+    w_w = o2.w
+    w_h = o2.h
+    w_x = o2.pos.x
+    w_y = o2.pos.y
+    w = o1.w
+    h = o1.h
+    x = o1.pos.x
+    y = o1.pos.y
+    if w_x <= x <= w_x+w_w:
+        if w_y <= y+h <= w_y+w_h:
+            return True
+    if x < w_x < x+w < w_x+w_w:
+        if w_y <= y+h <= w_y+w_h:
+            return True
+    return False
+
+
+def collide_down(o1, o2):
+    w_w = o2.w
+    w_h = o2.h
+    w_x = o2.pos.x
+    w_y = o2.pos.y
+    w = o1.w
+    x = o1.pos.x
+    y = o1.pos.y
+    if w_x <= x <= w_x+w_w:
+        if w_y <= y <= w_y+w_h+1:
+            return True
+    if x < w_x < x+w < w_x+w_w:
+        if w_y <= y <= w_y+w_h+1:
+            return True
+    return False

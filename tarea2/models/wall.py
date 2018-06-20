@@ -11,9 +11,9 @@ class Wall(Figura):
         a = self.a
         glBegin(GL_QUADS)
         glColor3f(0, 0, 0)
-        self.rect(0, 0, 1, 1)
+        rect(0, 0, 1, 1, a)
         glColor3f(0.5, 0.5, 0.5)
-        self.rect(0.05, 0.05, 0.9, 0.9)
+        rect(0.05, 0.05, 0.9, 0.9, a)
         glEnd()
         glBegin(GL_LINES)
         glColor3f(0, 0, 0)
@@ -25,13 +25,5 @@ class Wall(Figura):
         glEnd()
         glBegin(GL_QUADS)
         glColor3f(0.6, 0.6, 0.6)
-        self.rect(0.3, 0.3, 0.4, 0.4)
+        rect(0.3, 0.3, 0.4, 0.4, a)
         glEnd()
-
-    def rect(self, x1, y1, w, h):
-        a = self.a
-
-        glVertex2f(x1 * a, y1 * a)
-        glVertex2f(x1 * a, (y1 + h) * a)
-        glVertex2f((x1 + w) * a, (y1 + h) * a)
-        glVertex2f((x1 + w) * a, y1 * a)

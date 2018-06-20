@@ -12,23 +12,32 @@ class WallBreak(Figura):
         a = self.a
         glBegin(GL_QUADS)
         glColor3f(0.5, 0.5, 0.5)
-        self.rect(0, 0, 1, 1)
+        rect(0, 0, 1, 0.1, a)
+        rect(0, 0.3, 1, 0.1, a)
+        rect(0, 0.6, 1, 0.1, a)
+        rect(0, 0.9, 1, 0.1, a)
 
-        glColor3f(0, 0, 0)
-        self.rect(0, 0.2, 0.6, 0.1)
-        self.rect(0.5, 0.1, 0.5, 0.1)
+        rect(0, 0.1, 0.5, 0.1, a)
+        rect(0, 0.4, 0.5, 0.1, a)
+        rect(0, 0.7, 0.5, 0.1, a)
 
-        self.rect(0, 0.5, 0.6, 0.1)
-        self.rect(0.5, 0.4, 0.5, 0.1)
+        rect(0.6, 0.2, 0.4, 0.1, a)
+        rect(0.6, 0.5, 0.4, 0.1, a)
+        rect(0.6, 0.8, 0.4, 0.1, a)
 
-        self.rect(0, 0.8, 0.6, 0.1)
-        self.rect(0.5, 0.7, 0.5, 0.1)
         glEnd()
 
-    def rect(self, x1, y1, w, h):
-        a = self.a
+        glBegin(GL_LINES)
+        glColor3f(0, 0, 0)
+        glVertex2f(0, 0)
+        glVertex2f(0, a)
 
-        glVertex2f(x1 * a, y1 * a)
-        glVertex2f(x1 * a, (y1 + h) * a)
-        glVertex2f((x1 + w) * a, (y1 + h) * a)
-        glVertex2f((x1 + w) * a, y1 * a)
+        glVertex2f(0, a)
+        glVertex2f(a, a)
+
+        glVertex2f(a, a)
+        glVertex2f(a, 0)
+
+        glVertex2f(a, 0)
+        glVertex2f(0, 0)
+        glEnd()

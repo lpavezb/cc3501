@@ -4,12 +4,14 @@ import time
 
 class Bomb(Figura):
     def __init__(self, pos=Vector(0, 0), rgb=(1.0, 1.0, 1.0)):
-        self.a = 10
+        self.a = 50
         self.place_time = time.time()
         self.active = True
         self.exploding = False
-        self.w = 0
-        self.h = 0
+        self.invincible = True
+        self.invincible_time = time.time()
+        self.w = 0.6 * self.a
+        self.h = 0.8 * self.a
         super().__init__(pos, rgb)
 
     def figura(self):
@@ -18,49 +20,40 @@ class Bomb(Figura):
         else:
             self.explosion()
 
-    def bomb(self):
-        self.w = 3 * self.a
-        self.h = 4 * self.a
-
+    def bomb(self, tx=0, ty=0):
         glBegin(GL_POLYGON)
         a = self.a
         # head
         glColor3f(0, 0, 0)
-        glVertex2f(1 * a, 0 * a)
-        glVertex2f(0 * a, 1 * a)
-        glVertex2f(0 * a, 2 * a)
-        glVertex2f(1 * a, 3 * a)
-        glVertex2f(2 * a, 3 * a)
-        glVertex2f(3 * a, 2 * a)
-        glVertex2f(3 * a, 1 * a)
-        glVertex2f(2 * a, 0 * a)
+        glVertex2f((0.2 + tx) * a, (0 + ty) * a)
+        glVertex2f((0 + tx) * a, (0.2 + ty) * a)
+        glVertex2f((0 + tx) * a, (0.4 + ty) * a)
+        glVertex2f((0.2 + tx) * a, (0.6 + ty) * a)
+        glVertex2f((0.4 + tx) * a, (0.6 + ty) * a)
+        glVertex2f((0.6 + tx) * a, (0.4 + ty) * a)
+        glVertex2f((0.6 + tx) * a, (0.2 + ty) * a)
+        glVertex2f((0.4 + tx) * a, (0 + ty) * a)
 
         glEnd()
 
         glBegin(GL_QUADS)
         glColor3f(1, 1, 1)
-        self.rect(2, 1, 0.5, 1)
+        rect(0.4+tx, 0.2+ty, 0.1, 0.2, a)
 
-        self.rect(1.5, 2, 0.5, 0.5)
+        rect(0.3+tx, 0.4+ty, 0.1, 0.1, a)
 
         glColor3f(0.5, 0.5, 0.5)
-        self.rect(1, 3, 0.5, 0.5)
-        self.rect(1.5, 3.5, 0.5, 0.5)
+        rect(0.2+tx, 0.6+ty, 0.1, 0.1, a)
+        rect(0.3+tx, 0.7+ty, 0.1, 0.1, a)
         glColor3f(1, 0, 0)
-        self.rect(2, 3.5, 0.5, 0.5)
+        rect(0.4+tx, 0.7+ty, 0.1, 0.1, a)
 
         glEnd()
 
-    def rect(self, x1, y1, w, h):
-        a = self.a
-
-        glVertex2f(x1 * a, y1 * a)
-        glVertex2f(x1 * a, (y1 + h) * a)
-        glVertex2f((x1 + w) * a, (y1 + h) * a)
-        glVertex2f((x1 + w) * a, y1 * a)
-
-    def explode(self, timeout=1):
+    def explode(self, timeout=0.5):
         self.crear()
+        if time.time() - self.invincible_time > 0.3:
+            self.invincible = False
         if time.time() - self.place_time > timeout:
             self.place_time = time.time()
             if self.exploding:
@@ -68,7 +61,28 @@ class Bomb(Figura):
             self.exploding = True
 
     def explosion(self):
-        self.a = 15
         self.bomb()
+        self.bomb(tx=self.w/self.a)
+        self.bomb(tx=-self.w/self.a)
+        self.bomb(ty=-self.h/self.a)
+        self.bomb(ty=self.h/self.a)
 
+    def destroy_range_up(self):
+        b = Bomb(pos=Vector(self.pos.x, self.pos.y + self.h))
+        b.invincible = False
+        return b
 
+    def destroy_range_down(self):
+        b = Bomb(pos=Vector(self.pos.x, self.pos.y - self.h))
+        b.invincible = False
+        return b
+
+    def destroy_range_right(self):
+        b = Bomb(pos=Vector(self.pos.x + self.w, self.pos.y))
+        b.invincible = False
+        return b
+
+    def destroy_range_left(self):
+        b = Bomb(pos=Vector(self.pos.x - self.w, self.pos.y))
+        b.invincible = False
+        return b

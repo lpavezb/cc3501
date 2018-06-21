@@ -10,6 +10,7 @@ class Bomb(Figura):
         self.exploding = False
         self.invincible = True
         self.invincible_time = time.time()
+        self.explode_time = 1
         self.w = 0.6 * self.a
         self.h = 0.8 * self.a
         super().__init__(pos, rgb)
@@ -50,11 +51,12 @@ class Bomb(Figura):
 
         glEnd()
 
-    def explode(self, timeout=0.5):
+    def explode(self):
         self.crear()
         if time.time() - self.invincible_time > 0.3:
             self.invincible = False
-        if time.time() - self.place_time > timeout:
+        if time.time() - self.place_time > self.explode_time:
+            self.explode_time = 1
             self.place_time = time.time()
             if self.exploding:
                 self.active = False

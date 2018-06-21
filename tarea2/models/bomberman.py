@@ -1,12 +1,12 @@
 from models.bomb import *
+import math
 
 
 class Bomberman(Figura):
-    def __init__(self, pos=Vector(0, 0), vel=20, rgb=(1.0, 1.0, 1.0)):
-        self.alive = True
-        self.vel = vel
-        self.vel_x = Vector(self.vel, 0)
-        self.vel_y = Vector(0, self.vel)
+    def __init__(self, pos=Vector(0, 0), vel=25, rgb=(1.0, 1.0, 1.0), enemy=False):
+        self.active = True
+        self.vel_x = Vector(vel, 0)
+        self.vel_y = Vector(0, vel)
         self.a = 3.2
         self.can_place_bomb = True
         self.place_bomb_time = time.time()
@@ -17,6 +17,11 @@ class Bomberman(Figura):
         self.win = False
         self.aux_animation = False
         self.aux_animation_time = time.time()
+        self.move_right = False
+        self.move_left = False
+        self.move_up = False
+        self.move_down = False
+        self.is_enemy = enemy
         super().__init__(pos, rgb)
 
     def set_vel(self, v):
@@ -27,12 +32,74 @@ class Bomberman(Figura):
         self.can_place_bomb_timeout = t
 
     def figura(self):
-        if self.aux_animation:
-            self.figure1()
+        if not self.is_enemy:
+            if self.is_moving():
+                if self.aux_animation:
+                    self.figure1()
+                else:
+                    self.figure2()
+            else:
+                self.figure1()
         else:
-            self.figure2()
+            self.enemy()
+
+    def mover(self):
+        dt = 0.4
+        self.crear()
+        if time.time() - self.aux_animation_time > 0.5:
+            self.aux_animation_time = time.time()
+            self.aux_animation = not self.aux_animation
+        if self.move_up:
+            self.pos = sumar(self.pos, ponderar(dt, self.vel_y))
+        if self.move_down:
+            self.pos = sumar(self.pos, ponderar(-1 * dt, self.vel_y))
+        if self.move_right:
+            self.pos = sumar(self.pos, ponderar(dt, self.vel_x))
+        if self.move_left:
+            self.pos = sumar(self.pos, ponderar(-1 * dt, self.vel_x))
+
+        # limits
+        if self.pos.y < 0:
+            self.pos.y = 0
+            self.win = True
+
+    def place_bomb(self):
+        timeout = self.can_place_bomb_timeout
+        if self.can_place_bomb:
+            self.place_bomb_time = time.time()
+            self.can_place_bomb = False
+            return [Bomb(pos=self.pos)]
+        if time.time() - self.place_bomb_time > timeout:
+            self.can_place_bomb = True
+        return []
+
+    def stop_left(self, wall):
+        w_w = wall.w
+        w_x = wall.pos.x
+        self.pos.x = w_x + w_w + 1
+
+    def stop_right(self, wall):
+        w_x = wall.pos.x
+        w = self.w
+        self.pos.x = w_x - w
+
+    def stop_up(self, wall):
+        w_y = wall.pos.y
+        h = self.h
+        self.pos.y = w_y - h
+
+    def stop_down(self, wall):
+        w_h = wall.h
+        w_y = wall.pos.y
+        self.pos.y = w_y + w_h + 1
+
+    def is_moving(self):
+        return self.move_right or self.move_left or self.move_up or self.move_down
 
     def figure1(self):
+        self.w = 5 * self.a
+        self.h = 11.5 * self.a
+
         glBegin(GL_QUADS)
 
         # head
@@ -81,6 +148,9 @@ class Bomberman(Figura):
         glEnd()
 
     def figure2(self):
+        self.w = 5 * self.a
+        self.h = 11.5 * self.a
+
         glBegin(GL_QUADS)
 
         # head
@@ -128,55 +198,90 @@ class Bomberman(Figura):
 
         glEnd()
 
-    def mover(self, dt, move_right, move_left, move_up, move_down):
-        self.crear()
-        if time.time() - self.aux_animation_time > 0.5:
-            self.aux_animation_time = time.time()
-            self.aux_animation = not self.aux_animation
-        if move_up:
-            self.pos = sumar(self.pos, ponderar(dt, self.vel_y))
-        if move_down:
-            self.pos = sumar(self.pos, ponderar(-1 * dt, self.vel_y))
-        if move_right:
-            self.pos = sumar(self.pos, ponderar(dt, self.vel_x))
-        if move_left:
-            self.pos = sumar(self.pos, ponderar(-1 * dt, self.vel_x))
+    def enemy(self):
+        a = self.a
 
-        # limits
-        if self.pos.y < 0:
-            self.pos.y = 0
-            self.win = True
+        # head
+        glBegin(GL_POLYGON)
+        glVertex2f(1 * a, 8 * a)
+        glVertex2f(1 * a, 9 * a)
+        glVertex2f(2 * a, 10 * a)
+        glVertex2f(4 * a, 10 * a)
+        glVertex2f(5 * a, 9 * a)
+        glVertex2f(5 * a, 8 * a)
+        glVertex2f(4 * a, 7 * a)
+        glVertex2f(2 * a, 7 * a)
+        glEnd()
 
-    def place_bomb(self):
-        timeout = self.can_place_bomb_timeout
-        if self.can_place_bomb:
-            self.place_bomb_time = time.time()
-            self.bombs.append(Bomb(pos=self.pos))
-            self.can_place_bomb = False
-        if time.time() - self.place_bomb_time > timeout:
-            self.can_place_bomb = True
+        glBegin(GL_POLYGON)
+        glColor3f(0.5, 0.5, 0.5)
+        glVertex2f(2 * a, 9.5 * a)
+        glVertex2f(2 * a, 10 * a)
+        glVertex2f(4 * a, 10 * a)
+        glVertex2f(4 * a, 9.5 * a)
+        glVertex2f(3.5 * a, 9 * a)
+        glVertex2f(2.5 * a, 9 * a)
+        glEnd()
 
-    def explode_bomb(self):
-        for bomb in self.bombs:
-            bomb.explode()
+        glBegin(GL_QUADS)
+        glColor3f(0, 0, 0)
+        # eyes
+        rect(2, 8.25, 0.5, 0.5, a)
+        rect(3.5, 8.25, 0.5, 0.5, a)
 
-    def stop_left(self, wall):
-        w_w = wall.w
-        w_x = wall.pos.x
-        self.pos.x = w_x + w_w + 1
+        # mouth
+        rect(2.75, 7.25, 0.5, 0.25, a)
 
-    def stop_right(self, wall):
-        w_x = wall.pos.x
-        w = self.w
-        self.pos.x = w_x - w
+        # camera in the head
+        rect(2.85, 9.1, 0.25, 0.25, a)
 
-    def stop_up(self, wall):
-        w_y = wall.pos.y
-        h = self.h
-        self.pos.y = w_y - h
+        glColor3f(0.6, 0.6, 0.6)
+        # arms
+        rect(0, 4, 1, 3, a)
+        rect(5, 4, 1, 3, a)
 
-    def stop_down(self, wall):
-        w_h = wall.h
-        w_y = wall.pos.y
-        self.pos.y = w_y + w_h + 1
+        glColor3f(0.6, 0.6, 0.6)
+        # legs
+        rect(1, 0, 1, 3.5, a)
+        rect(4, 0, 1, 3.5, a)
+        glEnd()
 
+        # torso
+        glColor3f(162/255, 0, 0)
+        glBegin(GL_POLYGON)
+        glVertex2f(1 * a, 6 * a)
+        glVertex2f(1 * a, 7 * a)
+        glVertex2f(5 * a, 7 * a)
+        glVertex2f(5 * a, 6 * a)
+        glVertex2f(4 * a, 4 * a)
+        glVertex2f(2 * a, 4 * a)
+        glEnd()
+        glBegin(GL_QUADS)
+        rect(2, 3, 2, 1, a)
+        glEnd()
+
+        # aldebaran logo
+        glBegin(GL_TRIANGLE_FAN)
+        glColor3f(0.6, 0.6, 0.6)
+        glVertex2f(3 * a, 5.5 * a)
+        for i in range(9):
+            glVertex2f((3 + 0.5 * math.cos(i * 2 * math.pi / 8)) * a, (5.5 + 0.5 * math.sin(i * 2 * math.pi / 8)) * a)
+        glEnd()
+
+        glLineWidth(3)
+        glBegin(GL_LINES)
+        glColor3f(0, 0, 1)
+        glVertex2f(3 * a, 5.8 * a)
+        glVertex2f(3 * a, 5.6 * a)
+
+        glVertex2f(2.9 * a, 5.5 * a)
+        glVertex2f(3.1 * a, 5.5 * a)
+
+        glVertex2f(2.95 * a, 5.4 * a)
+        glVertex2f(2.8 * a, 5.2 * a)
+
+        glVertex2f(3.05 * a, 5.4 * a)
+        glVertex2f(3.1 * a, 5.3 * a)
+        glEnd()
+
+        glLineWidth(2)

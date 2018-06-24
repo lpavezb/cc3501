@@ -10,9 +10,10 @@ class Bomb(Figura):
         self.exploding = False
         self.invincible = True
         self.invincible_time = time.time()
-        self.explode_time = 1
+        self.explode_time = 3
         self.w = 0.6 * self.a
         self.h = 0.8 * self.a
+        self.explosion_sound = pygame.mixer.Sound("resources/explosion/explosion.wav")
         super().__init__(pos, rgb)
 
     def figura(self):
@@ -56,6 +57,8 @@ class Bomb(Figura):
         if time.time() - self.invincible_time > 0.3:
             self.invincible = False
         if time.time() - self.place_time > self.explode_time:
+            if not self.exploding:
+                self.explosion_sound.play(0)
             self.explode_time = 1
             self.place_time = time.time()
             if self.exploding:

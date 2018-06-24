@@ -31,7 +31,3 @@ class Vista:
         for enemy in enemies:
             enemy.dibujar()
         bomberman.dibujar()
-
-
-def collide(o1, o2):
-    return collide_up(o1, o2) or collide_down(o1, o2) or collide_left(o1, o2) or collide_right(o1, o2)

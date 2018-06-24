@@ -19,7 +19,6 @@ def main():
     ################
     # MAIN PROGRAM #
     ################
-    bomberman = Bomberman(pos=Vector(40, 30))
     fondo = Fondo()
     power_ups = []
     enemies = []
@@ -31,7 +30,13 @@ def main():
     r = 0.2  # breakable_wall creation probability
     breakable_walls, available_pos, break_wall_pos = create_breakable_walls(r, w)
 
+    # music
+    pygame.mixer.music.load("resources/maintheme.mp3")
+    pygame.mixer.music.play(-1)
+
+    bomberman = Bomberman(pos=Vector(40, 30))
     # add enemies
+    aux = True
     for i in range(0, 4):
         r = None
         while r is None:
@@ -41,8 +46,13 @@ def main():
             r = randint(0, len(available_pos) - 1)
             if available_pos[r] in break_wall_pos:
                 r = None
-
-        enemies.append(Bomberman(pos=available_pos[r] + Vector(15, 10), enemy=True))
+        if aux:
+            figure_type = 1
+            aux = not aux
+        else:
+            figure_type = 2
+            aux = not aux
+        enemies.append(Bomberman(pos=available_pos[r] + Vector(15, 10), figure_type=figure_type))
         available_pos.pop(r)
 
     r = randint(0, len(available_pos) - 1)
@@ -149,7 +159,7 @@ def main():
                 power_up.trigger(bomberman)
 
         for player in players:
-            for bomb in player.bombs:
+            for bomb in all_bombs:
                 if player.move_left and collide_left(player, bomb) and not bomb.invincible:
                     player.move_left = False
                     player.stop_left(bomb)
@@ -282,6 +292,10 @@ def move(enemy):
             enemy.move_left = enemy.move_up = enemy.move_down = False
             enemy.move_right = True
     enemy.mover()
+
+
+def collide(o1, o2):
+    return collide_up(o1, o2) or collide_down(o1, o2) or collide_left(o1, o2) or collide_right(o1, o2)
 
 
 main()

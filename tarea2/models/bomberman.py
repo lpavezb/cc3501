@@ -3,7 +3,7 @@ import math
 
 
 class Bomberman(Figura):
-    def __init__(self, pos=Vector(0, 0), vel=25, rgb=(1.0, 1.0, 1.0), enemy=False):
+    def __init__(self, pos=Vector(0, 0), vel=25, rgb=(1.0, 1.0, 1.0), figure_type=0):
         self.active = True
         self.vel_x = Vector(vel, 0)
         self.vel_y = Vector(0, vel)
@@ -21,7 +21,7 @@ class Bomberman(Figura):
         self.move_left = False
         self.move_up = False
         self.move_down = False
-        self.is_enemy = enemy
+        self.type = figure_type
         super().__init__(pos, rgb)
 
     def set_vel(self, v):
@@ -32,7 +32,7 @@ class Bomberman(Figura):
         self.can_place_bomb_timeout = t
 
     def figura(self):
-        if not self.is_enemy:
+        if self.type == 0:
             if self.is_moving():
                 if self.aux_animation:
                     self.figure1()
@@ -40,8 +40,10 @@ class Bomberman(Figura):
                     self.figure2()
             else:
                 self.figure1()
+        elif self.type == 1:
+            self.enemy_nao()
         else:
-            self.enemy()
+            self.enemy_pepper()
 
     def mover(self):
         dt = 0.4
@@ -198,8 +200,10 @@ class Bomberman(Figura):
 
         glEnd()
 
-    def enemy(self):
+    def enemy_nao(self):
         a = self.a
+        self.w = 6 * self.a
+        self.h = 10 * self.a
 
         # head
         glBegin(GL_POLYGON)
@@ -282,6 +286,165 @@ class Bomberman(Figura):
 
         glVertex2f(3.05 * a, 5.4 * a)
         glVertex2f(3.1 * a, 5.3 * a)
+        glEnd()
+
+        glLineWidth(2)
+
+    def enemy_pepper(self):
+        a = self.a
+        self.w = 6 * self.a
+        self.h = 12 * self.a
+
+        # head
+        glBegin(GL_POLYGON)
+        glVertex2f(1 * a, 10 * a)
+        glVertex2f(1 * a, 11 * a)
+        glVertex2f(2 * a, 12 * a)
+        glVertex2f(4 * a, 12 * a)
+        glVertex2f(5 * a, 11 * a)
+        glVertex2f(5 * a, 10 * a)
+        glVertex2f(4 * a, 9 * a)
+        glVertex2f(2 * a, 9 * a)
+        glEnd()
+
+        glBegin(GL_LINES)
+        glColor3f(0, 0, 0)
+        glVertex2f(2 * a, 11.5 * a)
+        glVertex2f(2 * a, 12 * a)
+
+        glVertex2f(4 * a, 12 * a)
+        glVertex2f(4 * a, 11.5 * a)
+
+        glVertex2f(4 * a, 11.5 * a)
+        glVertex2f(3.5 * a, 11 * a)
+
+        glVertex2f(3.5 * a, 11 * a)
+        glVertex2f(2.5 * a, 11 * a)
+
+        glVertex2f(2.5 * a, 11 * a)
+        glVertex2f(2 * a, 11.5 * a)
+        glEnd()
+
+        glBegin(GL_TRIANGLE_FAN)
+        glColor3f(0, 0, 1)
+        p_x = 2
+        p_y = 10.5
+        r = 0.3
+        glVertex2f(p_x * a, p_y * a)
+        for i in range(9):
+            glVertex2f((p_x + r * math.cos(i * 2 * math.pi / 8)) * a, (p_y + r * math.sin(i * 2 * math.pi / 8)) * a)
+        glEnd()
+
+        glBegin(GL_TRIANGLE_FAN)
+        glColor3f(0, 0, 0)
+        p_x = 2
+        p_y = 10.5
+        r = 0.25
+        glVertex2f(p_x * a, p_y * a)
+        for i in range(9):
+            glVertex2f((p_x + r * math.cos(i * 2 * math.pi / 8)) * a, (p_y + r * math.sin(i * 2 * math.pi / 8)) * a)
+        glEnd()
+
+        glBegin(GL_TRIANGLE_FAN)
+        glColor3f(0, 0, 1)
+        p_x = 4
+        p_y = 10.5
+        r = 0.3
+        glVertex2f(p_x * a, p_y * a)
+        for i in range(9):
+            glVertex2f((p_x + r * math.cos(i * 2 * math.pi / 8)) * a, (p_y + r * math.sin(i * 2 * math.pi / 8)) * a)
+        glEnd()
+
+        glBegin(GL_TRIANGLE_FAN)
+        glColor3f(0, 0, 0)
+        p_x = 4
+        p_y = 10.5
+        r = 0.25
+        glVertex2f(p_x * a, p_y * a)
+        for i in range(9):
+            glVertex2f((p_x + r * math.cos(i * 2 * math.pi / 8)) * a, (p_y + r * math.sin(i * 2 * math.pi / 8)) * a)
+        glEnd()
+
+        glBegin(GL_QUADS)
+        glColor3f(0, 0, 0)
+
+        # mouth
+        rect(2.75, 9.25, 0.5, 0.25, a)
+
+        # camera in the head
+        rect(2.85, 11.1, 0.25, 0.25, a)
+
+        glColor3f(0.6, 0.6, 0.6)
+        # arms
+        rect(0, 5, 1, 4, a)
+        rect(5, 5, 1, 4, a)
+        glEnd()
+        # torso
+        glColor3f(1, 1, 1)
+        glBegin(GL_POLYGON)
+        glVertex2f(2 * a, 6 * a)
+        glVertex2f(1 * a, 8 * a)
+        glVertex2f(1 * a, 9 * a)
+        glVertex2f(5 * a, 9 * a)
+        glVertex2f(5 * a, 8 * a)
+        glVertex2f(4 * a, 6 * a)
+        glEnd()
+
+        glBegin(GL_POLYGON)
+        glVertex2f(1.5 * a, 5 * a)
+        glVertex2f(4.5 * a, 5 * a)
+        glVertex2f(4 * a, 2 * a)
+        glVertex2f(2 * a, 2 * a)
+        glVertex2f(1.5 * a, 5 * a)
+        glEnd()
+
+        glColor3f(0.5, 0.5, 0.5)
+        glBegin(GL_POLYGON)
+        glVertex2f(2 * a, 6 * a)
+        glVertex2f(4 * a, 6 * a)
+        glVertex2f(4.5 * a, 5 * a)
+        glVertex2f(4 * a, 4.5 * a)
+        glVertex2f(2 * a, 4.5 * a)
+        glVertex2f(1.5 * a, 5 * a)
+        glEnd()
+
+        # base
+        glBegin(GL_QUADS)
+        glColor3f(0.5, 0.5, 0.5)
+        rect(2, 1, 2, 1, a)
+        glEnd()
+
+        glBegin(GL_POLYGON)
+        glColor3f(1, 1, 1)
+        glVertex2f(1 * a, 0 * a)
+        glVertex2f(1 * a, 0.5 * a)
+        glVertex2f(1.5 * a, 1 * a)
+        glVertex2f(4.5 * a, 1 * a)
+        glVertex2f(5 * a, 0.5 * a)
+        glVertex2f(5 * a, 0 * a)
+        glEnd()
+
+        # tablet
+        glBegin(GL_QUADS)
+        glColor3f(0, 0, 0)
+        rect(1.5, 6.5, 3, 2, a)
+        glEnd()
+
+        # aldebaran logo
+        glLineWidth(3)
+        glBegin(GL_LINES)
+        glColor3f(1, 1, 1)
+        glVertex2f(3 * a, 7.8 * a)
+        glVertex2f(3 * a, 7.6 * a)
+
+        glVertex2f(2.9 * a, 7.5 * a)
+        glVertex2f(3.1 * a, 7.5 * a)
+
+        glVertex2f(2.95 * a, 7.4 * a)
+        glVertex2f(2.8 * a, 7.2 * a)
+
+        glVertex2f(3.05 * a, 7.4 * a)
+        glVertex2f(3.1 * a, 7.3 * a)
         glEnd()
 
         glLineWidth(2)

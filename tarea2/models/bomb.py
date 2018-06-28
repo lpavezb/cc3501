@@ -3,7 +3,7 @@ import time
 
 
 class Bomb(Figura):
-    def __init__(self, pos=Vector(0, 0), rgb=(1.0, 1.0, 1.0)):
+    def __init__(self, pos=Vector(0, 0), rgb=(1.0, 1.0, 1.0), sound=None):
         self.a = 50
         self.place_time = time.time()
         self.active = True
@@ -13,7 +13,7 @@ class Bomb(Figura):
         self.explode_time = 3
         self.w = 0.6 * self.a
         self.h = 0.8 * self.a
-        self.explosion_sound = pygame.mixer.Sound("resources/explosion/explosion.wav")
+        self.explosion_sound = sound
         super().__init__(pos, rgb)
 
     def figura(self):

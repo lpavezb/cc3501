@@ -7,7 +7,6 @@ from models.bomberman import *
 from models.fondo import *
 from models.wall import *
 from random import *
-
 os.environ['SDL_VIDEO_CENTERED'] = '1'  # centrar pantalla
 
 
@@ -27,17 +26,20 @@ def main():
     w = Wall().w
     walls = create_walls(w)
 
-    r = 0.2  # breakable_wall creation probability
+    r = 0  # breakable_wall creation probability
     breakable_walls, available_pos, break_wall_pos = create_breakable_walls(r, w)
 
     # music
-    pygame.mixer.music.load("resources/maintheme.mp3")
+    pygame.mixer.pre_init(22050, -16, 2, 1024)
+    pygame.mixer.quit()
+    pygame.mixer.init(22050, -16, 2, 1024)
+    win_sound = pygame.mixer.Sound("resources/Win.wav")
+    pygame.mixer.music.load("resources/Maintheme.mp3")
     pygame.mixer.music.play(-1)
-
     bomberman = Bomberman(pos=Vector(40, 30))
     # add enemies
     aux = True
-    for i in range(0, 4):
+    for i in range(0, 0):
         r = None
         while r is None:
             if available_pos == break_wall_pos:
@@ -68,6 +70,10 @@ def main():
         # EVENT CONTROL #
         #################
         if bomberman.win:
+            pygame.mixer.quit()
+            pygame.mixer.init(32000)
+            win_sound.play(0)
+            pygame.time.delay(3500)
             run = False
 
         if not bomberman.active:

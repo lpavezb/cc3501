@@ -6,6 +6,7 @@ class VelPowerUp(Figura):
         self.a = 50
         self.w = self.h = self.a
         self.active = True
+        self.sound = pygame.mixer.Sound("resources/VelBonus.wav")
         super().__init__(pos, rgb)
 
     def figura(self):
@@ -38,6 +39,7 @@ class VelPowerUp(Figura):
         glPopMatrix()
 
     def trigger(self, bomberman):
+        self.sound.play(0)
         bomberman.set_vel(40)
         self.active = False
 
@@ -48,10 +50,11 @@ class BombPowerUp(Figura):
         self.w = self.h = self.a * 0.5
         self.active = True
         self.texture = glGenTextures(1)
+        self.sound = pygame.mixer.Sound("resources/BombBonus.wav")
         super().__init__(pos, rgb)
 
     def figura(self):
-        a = self.a * 0.8
+        a = self.a * 0.6
 
         glPushMatrix()
         glTranslatef(12, 10, 0)
@@ -71,12 +74,13 @@ class BombPowerUp(Figura):
         # arrow
 
     def trigger(self, bomberman):
+        self.sound.play(0)
         bomberman.set_bomb_place_time(bomberman.can_place_bomb_timeout/2)
         self.active = False
 
-    def set_texture(self):
+    def set_texture(self, image_path):
         ID = glGenTextures(1)
-        img = pygame.image.load("resources/download.png")
+        img = pygame.image.load(image_path)
         image_data = pygame.image.tostring(img, 'RGBA')
         tex_width, tex_height = img.get_size()
         glBindTexture(GL_TEXTURE_2D, ID)
@@ -94,7 +98,7 @@ class BombPowerUp(Figura):
 
     def bomb(self, tx=0, ty=0):
         glBegin(GL_POLYGON)
-        a = self.a * 0.8
+        a = self.a * 0.6
         # head
         glColor3f(0, 0, 0)
         glVertex2f((0.2 + tx) * a, (0 + ty) * a)

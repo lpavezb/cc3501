@@ -22,6 +22,8 @@ class Bomberman(Figura):
         self.move_up = False
         self.move_down = False
         self.type = figure_type
+        self.explosion_sound = pygame.mixer.Sound("resources/explosion/explosion.wav")
+        self.put_bomb_sound = pygame.mixer.Sound("resources/PutBomb.wav")
         super().__init__(pos, rgb)
 
     def set_vel(self, v):
@@ -68,9 +70,10 @@ class Bomberman(Figura):
     def place_bomb(self):
         timeout = self.can_place_bomb_timeout
         if self.can_place_bomb:
+            self.put_bomb_sound.play(0)
             self.place_bomb_time = time.time()
             self.can_place_bomb = False
-            return [Bomb(pos=self.pos)]
+            return [Bomb(pos=self.pos, sound=self.explosion_sound)]
         if time.time() - self.place_bomb_time > timeout:
             self.can_place_bomb = True
         return []

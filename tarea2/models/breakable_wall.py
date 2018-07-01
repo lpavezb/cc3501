@@ -1,7 +1,7 @@
 from CC3501Utils import *
 
 
-class WallBreak(Figura):
+class BreakableWall(Figura):
     def __init__(self, pos=Vector(0, 0), rgb=(1.0, 1.0, 1.0)):
         self.a = 50
         self.w = self.h = self.a

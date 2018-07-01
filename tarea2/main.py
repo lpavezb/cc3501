@@ -254,7 +254,7 @@ def create_breakable_walls(r, w):
         while wi_x < 800 - 2 * w:
             pos = Vector(wi_x, wi_y)
             if random() < r:
-                breakable_walls.append(WallBreak(pos=pos))
+                breakable_walls.append(BreakableWall(pos=pos))
                 wall_pos.append(pos)
             available_pos.append(pos)
             wi_x = wi_x + 2 * w
@@ -266,7 +266,7 @@ def create_breakable_walls(r, w):
         while wi_x < 800 - 2 * w:
             pos = Vector(wi_x, wi_y)
             if random() < r:
-                breakable_walls.append(WallBreak(pos=pos))
+                breakable_walls.append(BreakableWall(pos=pos))
                 wall_pos.append(pos)
             available_pos.append(pos)
             wi_x = wi_x + 4 * w
@@ -274,7 +274,7 @@ def create_breakable_walls(r, w):
         wi_y = wi_y + 4 * w
 
     # exit wall
-    breakable_walls.append(WallBreak(pos=Vector(15 * w, -w)))
+    breakable_walls.append(BreakableWall(pos=Vector(15 * w, -w)))
 
     return breakable_walls, available_pos, wall_pos
 

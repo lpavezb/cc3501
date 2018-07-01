@@ -1,5 +1,3 @@
-import numpy as np
-
 from models.breakable_wall import *
 from models.power_up import *
 from vista import *
@@ -15,54 +13,45 @@ def main():
     alto = 600
     init(ancho, alto, "Bomberman")
     vista = Vista()
+    fondo = Fondo()
     ################
     # MAIN PROGRAM #
     ################
-    fondo = Fondo()
-    power_ups = []
-    enemies = []
-    all_bombs = []
-    # create walls
-    w = Wall().w
-    walls = create_walls(w)
-
-    r = 0  # breakable_wall creation probability
-    breakable_walls, available_pos, break_wall_pos = create_breakable_walls(r, w)
 
     # music
     pygame.mixer.pre_init(22050, -16, 2, 1024)
     pygame.mixer.quit()
     pygame.mixer.init(22050, -16, 2, 1024)
     win_sound = pygame.mixer.Sound("resources/Win.wav")
-    pygame.mixer.music.load("resources/Maintheme.mp3")
+    pygame.mixer.music.load("resources/MainTheme.mp3")
     pygame.mixer.music.play(-1)
-    bomberman = Bomberman(pos=Vector(40, 30))
-    # add enemies
-    aux = True
-    for i in range(0, 0):
-        r = None
-        while r is None:
-            if available_pos == break_wall_pos:
-                r = 0
-                break
-            r = randint(0, len(available_pos) - 1)
-            if available_pos[r] in break_wall_pos:
-                r = None
-        if aux:
-            figure_type = 1
-            aux = not aux
-        else:
-            figure_type = 2
-            aux = not aux
-        enemies.append(Bomberman(pos=available_pos[r] + Vector(15, 10), figure_type=figure_type))
-        available_pos.pop(r)
 
+    # create walls
+    w = Wall().w
+    walls = create_walls(w)
+
+    # create breakable walls
+    r = 0.2  # breakable_wall creation probability (recommended r=0.2)
+    breakable_walls, available_pos, break_wall_pos = create_breakable_walls(r, w)
+
+    # create player Bomberman
+    bomberman = Bomberman(pos=Vector(40, 30))
+
+    # create enemies
+    n_enemies = 4
+    enemies, available_pos = create_enemies(n_enemies, available_pos, break_wall_pos)
+
+    # create power ups
+    power_ups = []
     r = randint(0, len(available_pos) - 1)
     power_ups.append(VelPowerUp(pos=available_pos[r]))
     available_pos.pop(r)
     r = randint(0, len(available_pos) - 1)
     power_ups.append(BombPowerUp(pos=available_pos[r]))
     available_pos.pop(r)
+
+    # bomb list
+    all_bombs = []
 
     run = True
     while run:
@@ -120,11 +109,10 @@ def main():
             all_bombs += bomberman.place_bomb()
 
         for event in pygame.event.get():
-
             if event.type == QUIT:  # cerrar ventana
                 run = False
 
-        # bot place bomb
+        # enemy place bomb
         for enemy in enemies:
             r = random()
             if r < 0.005:
@@ -134,6 +122,7 @@ def main():
         bomberman.mover()
         for enemy in enemies:
             move(enemy)
+
         ##############
         # COLLISIONS #
         ##############
@@ -154,16 +143,6 @@ def main():
                     player.move_down = False
                     player.stop_down(wall)
 
-        for power_up in power_ups:
-            if bomberman.move_left and collide_left(bomberman, power_up):
-                power_up.trigger(bomberman)
-            if bomberman.move_right and collide_right(bomberman, power_up):
-                power_up.trigger(bomberman)
-            if bomberman.move_up and collide_up(bomberman, power_up):
-                power_up.trigger(bomberman)
-            if bomberman.move_down and collide_down(bomberman, power_up):
-                power_up.trigger(bomberman)
-
         for player in players:
             for bomb in all_bombs:
                 if player.move_left and collide_left(player, bomb) and not bomb.invincible:
@@ -178,6 +157,10 @@ def main():
                 if player.move_down and collide_down(player, bomb) and not bomb.invincible:
                     player.move_down = False
                     player.stop_down(bomb)
+
+        for power_up in power_ups:
+            if collide(bomberman, power_up):
+                power_up.trigger(bomberman)
 
         for player in players:
             for bomb in all_bombs:
@@ -207,17 +190,44 @@ def main():
 
         for enemy in enemies:
             if collide(enemy, bomberman):
+                enemy.active = False
                 bomberman.active = False
+
+        # explode bombs
+        for bomb in all_bombs:
+            bomb.explode()
 
         ###########
         # Drawing #
         ###########
-        vista.dibujar(bomberman, fondo, walls, breakable_walls, power_ups, enemies, all_bombs)
+        vista.dibujar(players, fondo, walls, breakable_walls, power_ups, all_bombs)
 
         pygame.display.flip()  # actualizar pantalla
         pygame.time.wait(int(1000 / 30))  # ajusta a 30 fps
 
     pygame.quit()
+
+
+def create_enemies(n_enemies, available_pos, break_wall_pos):
+    enemies = []
+    aux = True
+    for i in range(0, n_enemies):
+        r = None
+        while r is None:
+            if available_pos == break_wall_pos:
+                r = 0
+                break
+            r = randint(0, len(available_pos) - 1)
+            if available_pos[r] in break_wall_pos:
+                r = None
+        if aux:
+            figure_type = 1
+            aux = not aux
+        else:
+            figure_type = 2
+            aux = not aux
+        enemies.append(Bomberman(pos=available_pos[r] + Vector(15, 10), figure_type=figure_type))
+    return enemies, available_pos
 
 
 def create_walls(w):
@@ -280,11 +290,14 @@ def create_breakable_walls(r, w):
 
 
 def move(enemy):
-    r = np.random.choice(np.arange(0, 2), p=[0.1, 0.9])
+    # TODO: move better
+
+    # 20% stay still, 80% move
+    r = np.random.choice(np.arange(0, 2), p=[0.2, 0.8])
     if r == 0:
         enemy.move_right = enemy.move_left = enemy.move_up = enemy.move_down = False
     else:
-        r = np.random.choice(np.arange(0, 4), p=[0.4, 0.2, 0.2, 0.2])
+        r = np.random.choice(np.arange(0, 4), p=[0.25, 0.25, 0.25, 0.25])
         if r == 0:
             enemy.move_right = enemy.move_left = enemy.move_up = False
             enemy.move_down = True

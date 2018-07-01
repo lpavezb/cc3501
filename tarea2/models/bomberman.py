@@ -13,7 +13,7 @@ class Bomberman(Figura):
         self.bombs = []
         self.w = 5 * self.a
         self.h = 11.5 * self.a
-        self.can_place_bomb_timeout = 1
+        self.can_place_bomb_timeout = 3
         self.win = False
         self.aux_animation = False
         self.aux_animation_time = time.time()
@@ -23,7 +23,7 @@ class Bomberman(Figura):
         self.move_down = False
         self.type = figure_type
         self.explosion_sound = pygame.mixer.Sound("resources/explosion/explosion.wav")
-        self.put_bomb_sound = pygame.mixer.Sound("resources/PutBomb.wav")
+        self.place_bomb_sound = pygame.mixer.Sound("resources/PutBomb.wav")
         super().__init__(pos, rgb)
 
     def set_vel(self, v):
@@ -37,11 +37,11 @@ class Bomberman(Figura):
         if self.type == 0:
             if self.is_moving():
                 if self.aux_animation:
-                    self.figure1()
+                    self.bender1()
                 else:
-                    self.figure2()
+                    self.bender2()
             else:
-                self.figure1()
+                self.bender1()
         elif self.type == 1:
             self.enemy_nao()
         else:
@@ -62,7 +62,7 @@ class Bomberman(Figura):
         if self.move_left:
             self.pos = sumar(self.pos, ponderar(-1 * dt, self.vel_x))
 
-        # limits
+        # win the game
         if self.pos.y < 0:
             self.pos.y = 0
             self.win = True
@@ -70,7 +70,7 @@ class Bomberman(Figura):
     def place_bomb(self):
         timeout = self.can_place_bomb_timeout
         if self.can_place_bomb:
-            self.put_bomb_sound.play(0)
+            self.place_bomb_sound.play(0)
             self.place_bomb_time = time.time()
             self.can_place_bomb = False
             return [Bomb(pos=self.pos, sound=self.explosion_sound)]
@@ -101,7 +101,7 @@ class Bomberman(Figura):
     def is_moving(self):
         return self.move_right or self.move_left or self.move_up or self.move_down
 
-    def figure1(self):
+    def bender1(self):
         self.w = 5 * self.a
         self.h = 11.5 * self.a
 
@@ -152,7 +152,7 @@ class Bomberman(Figura):
 
         glEnd()
 
-    def figure2(self):
+    def bender2(self):
         self.w = 5 * self.a
         self.h = 11.5 * self.a
 

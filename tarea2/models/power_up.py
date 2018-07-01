@@ -75,7 +75,7 @@ class BombPowerUp(Figura):
 
     def trigger(self, bomberman):
         self.sound.play(0)
-        bomberman.set_bomb_place_time(bomberman.can_place_bomb_timeout/2)
+        bomberman.set_bomb_place_time(1)
         self.active = False
 
     def set_texture(self, image_path):

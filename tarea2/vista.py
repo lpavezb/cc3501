@@ -2,15 +2,12 @@ from CC3501Utils import *
 
 
 class Vista:
-    def dibujar(self, bomberman, fondo, walls, breakable_walls, power_ups, enemies, all_bombs):
+    def dibujar(self, players, fondo, walls, breakable_walls, power_ups, all_bombs):
         # delete not active objects
         clean(all_bombs)
         clean(breakable_walls)
         clean(power_ups)
-        clean(enemies)
-
-        for bomb in all_bombs:
-            bomb.explode()
+        clean(players)
 
         ########################################
         # SE INICIA DIBUJO
@@ -28,6 +25,5 @@ class Vista:
             wall.dibujar()
         for bomb in all_bombs:
             bomb.dibujar()
-        for enemy in enemies:
-            enemy.dibujar()
-        bomberman.dibujar()
+        for player in players:
+            player.dibujar()

@@ -27,3 +27,6 @@ class Vista:
             bomb.dibujar()
         for player in players:
             player.dibujar()
+
+        pygame.display.flip()  # actualizar pantalla
+        pygame.time.wait(int(1000 / 30))  # ajusta a 30 fps

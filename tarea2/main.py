@@ -26,19 +26,22 @@ def main():
     pygame.mixer.music.load("resources/MainTheme.mp3")
     pygame.mixer.music.play(-1)
 
+    # sprites
+    explosion_sprites = get_sprites()
+
     # create walls
     w = Wall().w
     walls = create_walls(w)
 
     # create breakable walls
-    r = 0.2  # breakable_wall creation probability (recommended r=0.2)
+    r = 0  # breakable_wall creation probability (recommended r=0.2)
     breakable_walls, available_pos, break_wall_pos = create_breakable_walls(r, w)
 
     # create player Bomberman
     bomberman = Bomberman(pos=Vector(40, 30))
 
     # create enemies
-    n_enemies = 4
+    n_enemies = 0
     enemies, available_pos = create_enemies(n_enemies, available_pos, break_wall_pos)
 
     # create power ups
@@ -195,16 +198,12 @@ def main():
 
         # explode bombs
         for bomb in all_bombs:
-            bomb.explode()
+            bomb.explode(explosion_sprites)
 
         ###########
         # Drawing #
         ###########
         vista.dibujar(players, fondo, walls, breakable_walls, power_ups, all_bombs)
-
-        pygame.display.flip()  # actualizar pantalla
-        pygame.time.wait(int(1000 / 30))  # ajusta a 30 fps
-
     pygame.quit()
 
 

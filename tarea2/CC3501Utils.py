@@ -233,3 +233,23 @@ def collide_down(o1, o2):
         if w_y <= y <= w_y+w_h+1:
             return True
     return False
+
+
+def get_sprites(sprite_size=(32, 32), path='resources/explosion/explosion.png', sheet_x=7, sheet_y=4):
+    """
+    :param sprite_size: size of the sprite
+    :param path: path to the sprite sheet
+    :param sheet_x: number of columns in the sprite sheet
+    :param sheet_y: number of rows in the sprite sheet
+    :return: list of all the sprites in the sprite sheet
+    """
+    sheet = pygame.image.load(path).convert()
+    sheet.set_colorkey(sheet.get_at((0,0)))
+    sprites = []
+    for i in range(0, sheet_y):
+        subsprite = []
+        for j in range(0, sheet_x):
+            sheet.set_clip(pygame.Rect(sprite_size[0]*j, sprite_size[1]*i, sprite_size[0], sprite_size[1]))
+            subsprite.append(sheet.subsurface(sheet.get_clip()))
+        sprites.append(subsprite)
+    return sprites

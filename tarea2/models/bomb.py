@@ -10,7 +10,7 @@ class Bomb(Figura):
         self.exploding = False
         self.invincible = True
         self.invincible_time = time.time()
-        self.explode_time = 1
+        self.explode_time = 3
         self.w = 0.6 * self.a
         self.h = 0.8 * self.a
         self.explosion_sound = sound

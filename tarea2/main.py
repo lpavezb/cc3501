@@ -34,14 +34,14 @@ def main():
     walls = create_walls(w)
 
     # create breakable walls
-    r = 0  # breakable_wall creation probability (recommended r=0.2)
+    r = 0.2  # breakable_wall creation probability (recommended r=0.2)
     breakable_walls, available_pos, break_wall_pos = create_breakable_walls(r, w)
 
     # create player Bomberman
     bomberman = Bomberman(pos=Vector(40, 30))
 
     # create enemies
-    n_enemies = 0
+    n_enemies = 4
     enemies, available_pos = create_enemies(n_enemies, available_pos, break_wall_pos)
 
     # create power ups
@@ -55,7 +55,6 @@ def main():
 
     # bomb list
     all_bombs = []
-
     run = True
     while run:
         #################
@@ -203,7 +202,7 @@ def main():
         ###########
         # Drawing #
         ###########
-        vista.dibujar(players, fondo, walls, breakable_walls, power_ups, all_bombs)
+        vista.dibujar(bomberman, enemies, fondo, walls, breakable_walls, power_ups, all_bombs)
     pygame.quit()
 
 

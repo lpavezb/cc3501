@@ -2,12 +2,12 @@ from CC3501Utils import *
 
 
 class Vista:
-    def dibujar(self, players, fondo, walls, breakable_walls, power_ups, all_bombs):
+    def dibujar(self, bomberman, enemies, fondo, walls, breakable_walls, power_ups, all_bombs):
         # delete not active objects
         clean(all_bombs)
         clean(breakable_walls)
         clean(power_ups)
-        clean(players)
+        clean(enemies)
 
         ########################################
         # SE INICIA DIBUJO
@@ -25,8 +25,9 @@ class Vista:
             wall.dibujar()
         for bomb in all_bombs:
             bomb.dibujar()
-        for player in players:
+        for player in enemies:
             player.dibujar()
+        bomberman.dibujar()
 
         pygame.display.flip()  # actualizar pantalla
         pygame.time.wait(int(1000 / 30))  # ajusta a 30 fps

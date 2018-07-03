@@ -9,6 +9,7 @@ from OpenGL.GLU import *
 from pygame.locals import *
 import numpy as np
 
+
 # funcion para inicializar pygame y opengl en 2D
 def init(ancho, alto, titulo):
     # inicializar pygame

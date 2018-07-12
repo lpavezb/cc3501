@@ -1,0 +1,1 @@
+Para lanzar el juego se debe ejecutar main.py

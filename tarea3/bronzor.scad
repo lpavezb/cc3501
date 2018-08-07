@@ -1,4 +1,7 @@
 $fn=50;
+
+include <modules.scad>
+
 r=[0,90,0];
 
 //main cylinder
@@ -38,23 +41,19 @@ r_e = [90,0,90];
 s = 0.2;
 s2 = 0.05;
 color([1,1,1])
-translate([0.5,3.4,0])
-rotate(r_e) 
-    scale([s*1.2,2*s,s]) cylinder(h=1,r=5, center=true);
+translate([0.5,3.4,0]) rotate(r_e) scale([s*1.2,2*s,s]) 
+    cylinder(h=1,r=5, center=true);
+
 color([0,0,0])
-translate([0.6,3.4,0])
-rotate(r_e) 
-    scale([s2*1.5,4*s2,s2]) cylinder(h=1,r=5, center=true);
+translate([0.6,3.4,0]) rotate(r_e) scale([s2*1.5,4*s2,s2]) cylinder(h=1,r=5, center=true);
 
 ////left eye
 color([1,1,1])
-translate([0.5,-3.4,0])
-rotate(r_e) 
-    scale([s*1.2,2*s,s]) cylinder(h=1,r=5, center=true);
+translate([0.5,-3.4,0]) rotate(r_e) scale([s*1.2,2*s,s])
+    cylinder(h=1,r=5, center=true);
+
 color([0,0,0])
-translate([0.6,-3.4,0])
-rotate(r_e) 
-    scale([s2*1.5,4*s2,s2]) cylinder(h=1,r=5, center=true);
+translate([0.6,-3.4,0]) rotate(r_e) scale([s2*1.5,4*s2,s2]) cylinder(h=1,r=5, center=true);
 
 //center sphere
 color([0,128/255,128/255])
@@ -66,21 +65,17 @@ intersection(){
 
 //mid ring spheres
 color([0,128/255,128/255]){
-rotate([55,0,0])
-translate([0.3,4,0]) sphere(0.6);
-rotate([125,0,0])
-translate([0.3,4,0]) sphere(0.6);
-rotate([-55,0,0])
-translate([0.3,4,0]) sphere(0.6);
-rotate([-125,0,0])
-translate([0.3,4,0]) sphere(0.6);
+    rotate([55,0,0]) translate([0.3,4,0]) sphere(0.6);
+    rotate([125,0,0]) translate([0.3,4,0]) sphere(0.6);
+    rotate([-55,0,0])translate([0.3,4,0]) sphere(0.6);
+    rotate([-125,0,0]) translate([0.3,4,0]) sphere(0.6);
 }
 }
 //////////////////////////////////////////////////
 //rear design
 leaf = [[0,0],[1,0],[3,1],[4,3],[4,5],[3.5,7],[2.5,9],[1.5,10],
 [0,11],[-1.5,10],[-2.5,9],[-3.5,7],[-4,5],[-4,3],[-3,1],[-1,0]];
-branch = [[2,0],[0,10],[-1,9.5],[0,0],];
+branch = [[2,0],[0,10],[-1,9.5],[0,0]];
 
 t_h = [-0.5,9.5];
 r_h = [0,0,20];
@@ -93,39 +88,15 @@ translate([-0.8,0,-0.5]) rotate([0,90,0])
 scale([ss,ss,0.5])
 linear_extrude(height = 0.5)
 union(){
-union() {
-translate(t_up){
-    translate(t_h) rotate(r_h) polygon(leaf);
-    polygon(branch);};
-};
-mirror([0,1,0])
-union() {
-translate(t_up){
-translate(t_h) rotate(r_h) polygon(leaf);
-polygon(branch);};
-};
-
-translate([13,0,0]){
-union() {
-translate(t_d){
-    translate(t_h) rotate(r_h) polygon(leaf);
-    polygon(branch);};
-};
-mirror([0,1,0])
-union() {
-translate(t_d){
-    translate(t_h) rotate(r_h) polygon(leaf);
-    polygon(branch);};
-};
-};
+    leaf();
+    mirror([0,1,0]) leaf();
+    translate([13,0,0]){
+        leaf();
+        mirror([0,1,0]) leaf();
+    };
 
 //central branch
-p = [
-[20,-2.5],
-[20,2.5],
-[-8,1.5],
-[-8,-1.5]
-];
-polygon(p);
-translate([-8,0]) rotate([0,0,90]) polygon(1.8*leaf);
+    p = [[20,-2.5], [20,2.5], [-8,1.5], [-8,-1.5]];
+    polygon(p);
+    translate([-8,0]) rotate([0,0,90]) polygon(1.8*leaf);
 };

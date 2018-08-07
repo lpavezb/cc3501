@@ -21,6 +21,8 @@ module eye(){
         };
     };
 }
+$fn=100;
+
 module Ushape(ur1, ur2 ,uh) {
 
     // Circle resolution
@@ -54,3 +56,74 @@ module magnet(){
         color([0,0,1])translate([-0.2,6.2,-4.2])cube(2.4, center=true);
     };
 };
+
+
+module leaf(){
+    union() {
+        translate(t_up){
+            translate(t_h) rotate(r_h) polygon(leaf);
+            polygon(branch);
+        };
+    };
+};
+
+module part_circle(){
+    difference(){
+        difference(){
+            sphere(2);
+            translate([0,5,0])rotate([60,0,0])
+                cube(10, center=true);  
+        };
+    translate([0,-5,0])rotate([-60,0,0])cube(10, center=true);  
+    };
+};
+
+module screw(){
+    color(1/255*[192,192,192]){
+    cylinder(r=0.6, 5);
+    translate([0,0,3.5])
+    difference(){
+        difference(){
+            sphere(2);
+            translate([0,0,-3.5]) cube(9, center=true);  
+        };
+        
+        union(){
+            translate([0,0,0.25])
+            part_circle();
+
+            translate([0,0,0.25]) rotate([0,0,90])
+            part_circle();
+        };
+    };
+
+    linear_extrude(height = 4.5, center = false, convexity = 10, twist = 360*11, slices = 600)
+    translate([0.4, 0, 0])
+    circle(r = 0.25);
+};
+};
+
+module magnemite(){
+eye();
+translate([0,0,4.5])
+screw();
+
+translate([3,-3,-3])
+rotate([0,120,-20])
+screw();
+
+translate([3,3,-3])
+rotate([0,120,20])
+screw();
+
+rotate([45,0,0])
+translate([1,10.25, 0])
+rotate([0,0,-10])
+magnet();
+    
+rotate([-45,0,0])
+translate([1,-10.25, 0])
+rotate([180,0,10])
+magnet();
+};
+screw();

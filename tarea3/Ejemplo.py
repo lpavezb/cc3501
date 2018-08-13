@@ -72,7 +72,7 @@ W = 640  # ancho de ventana
 H = 480  # alto de ventana
 
 # inicializando ...
-init_pygame(W, H, "glutfigures_01_colores")
+init_pygame(W, H, "bronzor")
 init_opengl(W, H)
 
 # imprime información sobre el Hardware gráfico y
@@ -130,22 +130,17 @@ while run:
     if pressed[K_a]:
         camAt = rotarFi(camAt, -0.1)
 
-    if pressed[K_r]:
-        l_position = Vector(uniform(0, 1000), uniform(0, 1000), uniform(0, 1000))
-
     if pressed[K_1]:
-        l_position = Vector(1000.0, 100.0, 500.0)
         camPos = Vector(0, 0, 4000)
         camAt = Vector(14140, -200, -328000)
 
     if pressed[K_2]:
-        camPos = Vector(-1926.7001808016196, -1926.7001808016196, 104.30468009208232)
-        camAt = Vector(10000, 10000, -2000)
+        camPos = Vector(1926.700, 1926.700, 104.30)
+        camAt = Vector(-10000, -10000, -2000)
 
     if pressed[K_3]:
-        l_position = Vector(1000.0, 100.0, -500.0)
         camPos = Vector(0, 0, -4000)
-        camAt = Vector(14140, -200, 328000)
+        camAt = Vector(-14140, 200, 328000)
 
     if pressed[K_ESCAPE]:
         run = False

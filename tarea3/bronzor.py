@@ -18,9 +18,9 @@ class Bronzor:
 
         glBegin(GL_TRIANGLES)
 
-        glColor3f(0,128/255,128/255)
+        glColor3f(0, 128 / 255, 128 / 255)
         cilindro(1000, 400, Vector(0, 0, -200))
-        glColor3f(0,70/255,128/255)
+        glColor3f(0, 70 / 255, 128 / 255)
         cilindro(800, 440, Vector(0, 0, -220))
 
         r = 1000
@@ -53,13 +53,13 @@ class Bronzor:
         for i in range(0, int(360 / 30)):
             x = r * math.cos(t)
             y = r * math.sin(t)
-            glVertex3f(x, y, 220)
+            glVertex3f(x, y, 221)
             t += 30 * (math.pi / 180)
         t = 0
         for i in range(0, int(360 / 30)):
             x = r * math.cos(t)
             y = r * math.sin(t)
-            glVertex3f(x, y, 220)
+            glVertex3f(x, y, 221)
             t += 30 * (math.pi / 180)
         glEnd()
 
@@ -77,11 +77,45 @@ class Bronzor:
         self.eye()
         glPopMatrix()
 
+        glColor3f(0, 90 / 255, 128 / 255)
         glPushMatrix()
-        glColor3f(0, 0, 0)
-        glTranslatef(-350, 450, 0)
-        glRotatef(90, 0, 0, 1)
-        self.leaf()
+        glTranslatef(250, 0, 0)
+        glRotatef(-90, 0, 0, 1)
+        self.leaf(35)
+        self.branch2(20, 40)
+        glPopMatrix()
+
+        a = 20
+        an = -20
+        t_y = -300
+        t_x = -200
+        h = 15
+        glPushMatrix()
+        glTranslatef(100, t_y, 0)
+        glRotatef(180 - an, 0, 0, 1)
+        self.leaf(a)
+        self.branch(a, h)
+        glPopMatrix()
+
+        glPushMatrix()
+        glTranslatef(100, -1 * t_y, 0)
+        glRotatef(an, 0, 0, 1)
+        self.leaf(a)
+        self.branch(a, h)
+        glPopMatrix()
+
+        glPushMatrix()
+        glTranslatef(t_x, t_y, 0)
+        glRotatef(180 - an, 0, 0, 1)
+        self.leaf(a)
+        self.branch(a, h)
+        glPopMatrix()
+
+        glPushMatrix()
+        glTranslatef(t_x, -1 * t_y, 0)
+        glRotatef(an, 0, 0, 1)
+        self.leaf(a)
+        self.branch(a, h)
         glPopMatrix()
 
         glEndList()
@@ -114,11 +148,26 @@ class Bronzor:
 
         glEnd()
 
-    def leaf(self):
         glBegin(GL_POLYGON)
-        z = -400
-        a = 25
-        glVertex3f(1*a, 0, z)
+        glColor3f(0, 0, 0)
+        x = 0
+        y = -450
+        z = 230
+        glVertex3f(x - 50, y + 50, z)
+        glVertex3f(x - 50, y + 150, z)
+        glVertex3f(x - 75, y + 200, z)
+        glVertex3f(x - 125, y + 200, z)
+        glVertex3f(x - 150, y + 150, z)
+        glVertex3f(x - 150, y + 50, z)
+        glVertex3f(x - 125, y, z)
+        glVertex3f(x - 75, y, z)
+
+        glEnd()
+
+    def leaf(self, a):
+        glBegin(GL_POLYGON)
+        z = -230
+        glVertex3f(1 * a, 0, z)
         glVertex3f(3 * a, 1 * a, z)
         glVertex3f(4 * a, 3 * a, z)
         glVertex3f(4 * a, 5 * a, z)
@@ -135,5 +184,25 @@ class Bronzor:
         glVertex3f(-4 * a, 3 * a, z)
         glVertex3f(-3 * a, 1 * a, z)
         glVertex3f(-1 * a, 0, z)
+
+        glEnd()
+
+    def branch(self, a, h):
+        glBegin(GL_POLYGON)
+        z = -230
+        glVertex3f(-1 * a, 0, z)
+        glVertex3f(1 * a, 0 * a, z)
+        glVertex3f(2 * a, -1 * h * a, z)
+        glVertex3f(-2 * a, -1 * h * a, z)
+
+        glEnd()
+
+    def branch2(self, a, h):
+        glBegin(GL_POLYGON)
+        z = -230
+        glVertex3f(-1.5 * a, 0, z)
+        glVertex3f(1.5 * a, 0 * a, z)
+        glVertex3f(4 * a, -1 * h * a, z)
+        glVertex3f(-4 * a, -1 * h * a, z)
 
         glEnd()

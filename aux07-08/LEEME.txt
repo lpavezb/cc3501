@@ -1,0 +1,33 @@
+Al ejecutar cada archivo, en consola se imprime informacion sobre la tarjeta de video utilizada y la versión disponible de OpenGL.
+
+Para que todo funcione correctamente, la versión de OpenGL debe ser al menos 3.0
+
+Las diapositivas 'cg3D.pdf' sirven de introducción.
+
+Se recomienda revisar todos los archivos en el siguiente orden:
+
+(dibujos sin usar iluminación)
+- cubos_01_colores.py
+- glutfigures_01_colores.py
+- glutfigures_02_listas.py
+
+(dibujos utilizando iluminación)
+- cubos_02_lighting.py
+- glutfigures_03_lighting.py
+- glutfigures_04_lighting2.py
+- plano_01_lighting.py
+
+(dibujos utilizando texturas, requieren archivo 'ladrillo.jpg')
+- cubos_03_textura.py
+- cubos_04_textura-lighting.py
+
+Los archivos utilizan funciones auxiliares del arhcivo 'AuxiliaryFunctions.py', revisar las funciones particulares a medida que se van utilizando.
+
+El archivo 'cubo.png' muestra el orden de los vértices utilizados para dibujar los cubos.
+
+Al comienzo de cada archivo, se especifican las teclas de control utilizadas.
+
+Fijarse además en las pequeñas variaciones en la inicialización de OpenGL (usar o no texturas, usar o no iluminación).
+
+------------------
+Daniel Calderon S.

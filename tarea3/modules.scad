@@ -23,8 +23,8 @@ module eye(){
 }
 $fn=100;
 
+//https://foamscience.github.io/openscad-cfd-usage-examples
 module Ushape(ur1, ur2 ,uh) {
-
     // Circle resolution
     cRes = 30;
     // Extrusion resolution
@@ -57,7 +57,6 @@ module magnet(){
     };
 };
 
-
 module leaf(){
     union() {
         translate(t_up){
@@ -77,7 +76,6 @@ module part_circle(){
     translate([0,-5,0])rotate([-60,0,0])cube(10, center=true);  
     };
 };
-
 module screw(){
     color(1/255*[192,192,192]){
     cylinder(r=0.6, 5);
@@ -102,7 +100,6 @@ module screw(){
     circle(r = 0.25);
 };
 };
-
 module magnemite(){
 eye();
 translate([0,0,4.5])
@@ -126,4 +123,3 @@ translate([1,-10.25, 0])
 rotate([180,0,10])
 magnet();
 };
-screw();

@@ -11,6 +11,7 @@
 .idea/dictionaries
 
 venv/
+**/.idea/
 *.stl
 # Sensitive or high-churn files:
 .idea/**/dataSources/

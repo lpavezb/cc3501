@@ -17,11 +17,10 @@ class Bronzor:
         glNewList(self.lista, GL_COMPILE)
 
         glBegin(GL_TRIANGLES)
-        color = [28, 195, 204]  # cafe
-        Ncolor = [color[0] / 255.0, color[1] / 255.0, color[2] / 255.0]
 
-        glColor3f(Ncolor[0], Ncolor[1], Ncolor[2])  # amarillo
+        glColor3f(0,128/255,128/255)
         cilindro(1000, 400, Vector(0, 0, -200))
+        glColor3f(0,70/255,128/255)
         cilindro(800, 440, Vector(0, 0, -220))
 
         r = 1000
@@ -32,15 +31,16 @@ class Bronzor:
             esfera(200, Vector(x, y, 0))
             t += math.pi / 3
 
+        glColor3f(0, 128 / 255, 128 / 255)
         r = 400
         t = 30 * (math.pi / 180)
         x = r * math.cos(t)
         y = r * math.sin(t)
         z = 200
-        esfera(80, Vector(x, y, z))
-        esfera(80, Vector(x, -1 * y, z))
-        esfera(80, Vector(-1 * x, -1 * y, z))
-        esfera(80, Vector(-1 * x, y, z))
+        esfera(60, Vector(x, y, z))
+        esfera(60, Vector(x, -1 * y, z))
+        esfera(60, Vector(-1 * x, -1 * y, z))
+        esfera(60, Vector(-1 * x, y, z))
 
         esfera(200, Vector(0, 0, 200))
         glEnd()
@@ -78,6 +78,7 @@ class Bronzor:
         glPopMatrix()
 
         glPushMatrix()
+        glColor3f(0, 0, 0)
         glTranslatef(-350, 450, 0)
         glRotatef(90, 0, 0, 1)
         self.leaf()
@@ -115,8 +116,7 @@ class Bronzor:
 
     def leaf(self):
         glBegin(GL_POLYGON)
-        glColor4f(1, 1, 1,-1)
-        z = -600
+        z = -400
         a = 25
         glVertex3f(1*a, 0, z)
         glVertex3f(3 * a, 1 * a, z)

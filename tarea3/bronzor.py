@@ -49,18 +49,16 @@ class Bronzor:
         glBegin(GL_LINES)
         glColor3f(0, 0, 0)
         r = 400
-        t = 30 * (math.pi / 180)
+        t_i = 0
         for i in range(0, int(360 / 30)):
-            x = r * math.cos(t)
-            y = r * math.sin(t)
-            glVertex3f(x, y, 221)
-            t += 30 * (math.pi / 180)
-        t = 0
-        for i in range(0, int(360 / 30)):
-            x = r * math.cos(t)
-            y = r * math.sin(t)
-            glVertex3f(x, y, 221)
-            t += 30 * (math.pi / 180)
+            t_f = t_i + 30 * (math.pi / 180)
+            x_i = r * math.cos(t_i)
+            x_f = r * math.cos(t_f)
+            y_i = r * math.sin(t_i)
+            y_f = r * math.sin(t_f)
+            glVertex3f(x_i, y_i, 221)
+            glVertex3f(x_f, y_f, 221)
+            t_i += 30 * (math.pi / 180)
         glEnd()
 
         glLineWidth(1)
@@ -152,7 +150,7 @@ class Bronzor:
         glColor3f(0, 0, 0)
         x = 0
         y = -450
-        z = 230
+        z = 232
         glVertex3f(x - 50, y + 50, z)
         glVertex3f(x - 50, y + 150, z)
         glVertex3f(x - 75, y + 200, z)
@@ -188,7 +186,7 @@ class Bronzor:
         glEnd()
 
     def branch(self, a, h):
-        glBegin(GL_POLYGON)
+        glBegin(GL_QUADS)
         z = -230
         glVertex3f(-1 * a, 0, z)
         glVertex3f(1 * a, 0 * a, z)

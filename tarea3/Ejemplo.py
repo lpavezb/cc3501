@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Daniel Calderon S.
+Lukas Pavez
 
-file: glutfigures_01_colores.py
+file: Ejemplo.py
 ----------------
-Dibuja figuras GLUT en la escena.
+dibuja un bronzor en la escena
 
 Control del programa:
-SPACE: cambiar figura
-1: visualiza o no los ejes de coordenadas
-2: visualiza o no como malla de alambre
-3: cambia el color de la figura visualizada333332
+Flechas y W, A, S, D: mover camara
+1: vista frontal
+2: vista de el lado
+3: vista de atras
 ESC: terminar
 """
 
@@ -18,9 +18,6 @@ import pygame
 from pygame.locals import *
 
 from AuxiliaryFunctions import *
-
-from random import uniform
-
 
 #####################################################################
 from bronzor import *
@@ -116,10 +113,6 @@ while run:
         camPos = sumar(ponderar(100, normalizar(camAt)), camPos)
     if pressed[K_DOWN]:
         camPos = sumar(ponderar(-100, normalizar(camAt)), camPos)
-    if pressed[K_RIGHT]:
-        camPos = sumar(ponderar(-100, rotarFi(normalizar(camAt), 90)), camPos)
-    if pressed[K_LEFT]:
-        camPos = sumar(ponderar(100, rotarFi(normalizar(camAt), 90)), camPos)
 
     if pressed[K_w]:
         camAt = sumar(Vector(0, 0, 1000), camAt)
